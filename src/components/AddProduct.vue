@@ -5,7 +5,7 @@
     <label for="price">Preço</label>
     <input type="number" name="price" id="price" v-model="product.preco" />
     <label for="photos">Fotos</label>
-    <input type="file" name="photos" id="photos" ref="product.fotos" />
+    <input type="file" name="photos" id="photos" multiple @change="handleFileUpload" />
     <label for="description">Descrição</label>
     <textarea name="description" id="description" v-model="product.descricao"></textarea>
     <input class="btn" type="button" value="Adicionar Produto" @click.prevent="addProduct" />
@@ -13,32 +13,47 @@
 </template>
 
 <script>
-import { api } from "@/services.js"
+import { api } from "@/services.js";
 
 export default {
   name: "AddProduct",
-  data () {
+  data() {
     return {
       product: {
         nome: "",
         preco: "",
         descricao: "",
         vendido: "false",
-        fotos: null
+        fotos: []
       }
-    }
+    };
   },
   methods: {
-    productFormat () {
-      this.product.usuario_id = this.$store.state.usuario.id
+    productFormat() {
+      this.product.usuario_id = this.$store.state.usuario.id;
     },
-    async addProduct () {
-      this.productFormat()
-      await api.post("/produto", this.product)
-      await this.$store.dispatch('getUserProducts')
+    handleFileUpload(event) {
+      const files = event.target.files;
+      for (let i = 0; i < files.length; i++) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          this.product.fotos.push(e.target.result);
+        };
+        reader.readAsDataURL(files[i]);
+      }
+    },
+    async addProduct() {
+      this.productFormat();
+      console.log("Product Data:", this.product); 
+      try {
+        await api.post("/produto", this.product);
+        await this.$store.dispatch('getUserProducts');
+      } catch (error) {
+        console.error("Error adding product:", error); 
+      }
     }
-  },
-}
+  }
+};
 </script>
 
 <style scoped>

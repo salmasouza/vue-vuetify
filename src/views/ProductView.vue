@@ -1,9 +1,10 @@
 <template>
   <section>
     <div v-if="product" class="product">
-      <ul v-if="product.fotos" class="images">
+      
+      <ul v-if="product.fotos && product.fotos.length" class="images">
         <li v-for="(image, index) in product.fotos" :key="index">
-          <img :src="image.src" :alt="image.titulo">
+          <img :src="image.src" :alt="image.titulo" />
         </li>
       </ul>
       <div class="info">
@@ -57,6 +58,22 @@ export default {
   margin: 0 auto;
   max-width: 900px;
   padding: 60px 20px;
+}
+
+.images {
+  list-style: none;
+  padding: 0;
+}
+
+.images li {
+  margin-bottom: 20px;
+}
+
+.images img {
+  width: 100%;
+  height: auto;
+  border-radius: 4px;
+  object-fit: cover;
 }
 
 .price {

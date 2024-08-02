@@ -3,11 +3,11 @@
     <transition mode="out-in">
       <div v-if="products && products.length" class="products" key="products">
         <div v-for="product in products" :key="product.id" class="product">
-          <router-link :to="{name: 'produto', params: { id: product.id }}">
+          <router-link :to="{ name: 'produto', params: { id: product.id }}">
             <img
-              v-if="product.fotos"
-              :src="product.fotos[0].src"
-              :alt="product.fotos[0].titulo"
+              v-if="product.fotos && product.fotos.length"
+              :src="product.fotos[0]"
+              :alt="product.nome"
             />
             <p class="price">{{ product.preco | numberPrice }}</p>
             <h2 class="name">{{ product.nome }}</h2>

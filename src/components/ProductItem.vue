@@ -1,18 +1,19 @@
 <template>
   <div class="product" v-if="product">
     <router-link class="product-img" :to="{ name: 'produto', params: { id: product.id } }">
+     
       <img
-        v-if="product.fotos"
-        :src="product.fotos[0].src"
-        :alt="product.fotos[0].titulo"
+        v-if="product.fotos && product.fotos.length"
+        :src="product.fotos[0]"  
+        :alt="product.nome"
       />
       <p>Ver produto</p>
     </router-link>
-      <div class="info">
-        <p class="price">{{ product.preco | numberPrice }}</p>
-        <h2 class="title">{{ product.nome }}</h2>
-        <slot></slot>
-      </div>
+    <div class="info">
+      <p class="price">{{ product.preco | numberPrice }}</p>
+      <h2 class="title">{{ product.nome }}</h2>
+      <slot></slot>
+    </div>
   </div>
 </template>
 
@@ -40,5 +41,11 @@ export default {
   border-radius: 4px;
   height: 100px;
   overflow: hidden;
+}
+
+.product-img img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
 }
 </style>
