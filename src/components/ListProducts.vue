@@ -1,7 +1,8 @@
 <template>
   <section class="container-products">
     <transition mode="out-in">
-      <div v-if="!loading && products && products.length" class="products" key="products">
+      
+      <div v-if="!loading && products.length" class="products" key="products">
         <v-card v-for="product in products" :key="product.id" class="product" flat>
           <v-img v-if="product.fotos && product.fotos.length" :src="product.fotos[0]" :alt="product.nome" height="200px"></v-img>
           <v-card-title>
@@ -28,20 +29,27 @@
           </v-btn>
         </v-card>
       </div>
-      <div v-else-if="!loading && products && products.length === 0" key="empty-search">
+      
+      
+      <div v-else-if="!loading && products.length === 0" key="empty-search">
         <p class="empty-search">Busca sem resultados. Tente buscar outro termo.</p>
       </div>
+      
+     
       <LoadingComponent v-if="loading" key="loading" />
     </transition>
+    
+   
+    <div v-if="!loading && products.length" class="pagination-container">
+      <v-pagination v-model="page" :length="totalPages" circle @input="getProducts"></v-pagination>
+    </div>
+    
+   
     <v-alert v-if="showAlert" dense text type="success" @click="showAlert = false" class="success-alert success-alert-green">
       Produto adicionado ao carrinho com sucesso!
     </v-alert>
-    <div class="pagination-container">
-      <v-pagination v-model="page" :length="totalPages" circle @input="getProducts"></v-pagination>
-    </div>
   </section>
 </template>
-
 
 <script>
 import LoadingComponent from "./LoadingComponent.vue";
@@ -54,11 +62,11 @@ export default {
   data() {
     return {
       products: [],
-      prodPerPage: 3, 
+      prodPerPage: 3,
       qntProducts: 0,
-      showAlert: false, 
+      showAlert: false,
       loading: true,
-      page: 1, 
+      page: 1,
     };
   },
   computed: {
@@ -72,11 +80,11 @@ export default {
   },
   methods: {
     getProducts() {
-      this.loading = true; 
+      this.loading = true;
       api.get(this.url).then((res) => {
         this.qntProducts = Number(res.headers["x-total-count"]);
         this.products = res.data || [];
-        this.loading = false; 
+        this.loading = false;
       }).catch(error => {
         console.error('Erro ao obter produtos:', error);
         this.loading = false;
@@ -84,22 +92,18 @@ export default {
     },
     toggleFavorite(product) {
       product.favorito = !product.favorito;
-    
     },
     handleAddToCart(product) {
       if (this.$store.state.login) {
         this.addToCart(product);
       } else {
-       
         this.$store.commit('SET_REDIRECT_AFTER_LOGIN', this.$route.fullPath);
         this.$router.push('/login');
       }
     },
     addToCart(product) {
       this.$store.dispatch('addToCart', product).then(() => {
-       
         this.showAlert = true;
-       
         setTimeout(() => {
           this.showAlert = false;
         }, 3000);
@@ -126,15 +130,14 @@ export default {
 .container-products {
   margin: 0 auto;
   max-width: 1000px;
-  position: relative; 
-  padding-bottom: 60px; 
+  padding: 30px; 
 }
 
 .products {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-gap: 30px;
-  margin: 30px;
+  margin-bottom: 60px; 
 }
 
 .product {
@@ -143,7 +146,6 @@ export default {
   transition: all 0.2s;
   border: 1px solid #ccc;
   border-radius: 4px;
-
 }
 
 .product:hover {
@@ -185,12 +187,10 @@ export default {
 
 .favorite-btn {
   right: 50px;
-  
 }
 
 .cart-btn {
   right: 10px;
- 
 }
 
 .empty-search {
@@ -213,14 +213,7 @@ export default {
 }
 
 .pagination-container {
-  position: absolute;
-  bottom: 0; 
-  left: 50%;
-  transform: translateX(-50%); 
-  width: 100%; 
-  background: transparent; 
-  text-align: center; 
-  padding: 10px 0; 
-  z-index: 100; 
+  text-align: center;
+  padding: 10px 0;
 }
 </style>
