@@ -1,19 +1,20 @@
 <template>
   <section class="login">
     <div v-if="createIsOpen === false">
-    <h1>Login</h1>
-    <form>
-      <label for="email">Email</label>
-      <input type="email" name="email" id="email" v-model="login.email" >
-      <label for="password">Senha</label>
-      <input type="password" name="password" id="password" v-model="login.password" >
-      <button class="btn" @click.prevent="logar">Entrar</button>
-    </form>
-    <p class="forgot-password">
-      Esqueceu a senha?
-      <a href="/">Clique aqui.</a>
-    </p>
-    <p class="create-acc" @click="createIsOpen = true">Criar conta</p>
+      <h1>Login</h1>
+      <form @submit.prevent="logar">
+        <label for="email">Email</label>
+        <input type="email" name="email" id="email" v-model="login.email" @blur="checkEmail">
+        <p v-if="emailError" class="error">{{ emailError }}</p>
+        <label for="password">Senha</label>
+        <input type="password" name="password" id="password" v-model="login.password">
+        <button class="btn" type="submit">Entrar</button>
+      </form>
+      <p class="forgot-password">
+        Esqueceu a senha?
+        <a href="/">Clique aqui.</a>
+      </p>
+      <p class="create-acc" @click="createIsOpen = true">Criar conta</p>
     </div>
     <div v-else>
       <CreateAcc />
@@ -33,15 +34,31 @@ export default {
       login: {
         email: '',
         password: '',
-      }
+      },
+      emailError: '' 
     }
   },
   methods: {
     logar() {
-      this.$store.dispatch('getUser', this.login.email)
-      this.$router.push({ name: 'usuario'})
+      if (this.emailError) {
+        alert('Por favor, corrija os erros antes de enviar.');
+        return;
+      }
+
+      this.$store.dispatch('getUser', this.login.email).then(() => {
+        const redirectPath = this.$store.state.redirectAfterLogin || { name: 'usuario' };
+        this.$store.commit('setRedirectAfterLogin', null);
+        this.$router.push(redirectPath);
+      });
+    },
+    checkEmail() {
+      if (!this.login.email.includes('@')) {
+        this.emailError = 'O email deve conter um "@".';
+      } else {
+        this.emailError = '';
+      }
     }
-  },
+  }
 }
 </script>
 
@@ -90,5 +107,11 @@ form {
 .forgot-password a:hover,
 .create-acc:hover {
   text-decoration: underline;
+}
+
+.error {
+  color: red;
+  font-size: 0.875rem;
+  margin-top: 5px;
 }
 </style>

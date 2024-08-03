@@ -14,11 +14,17 @@
     <label for="cep">CEP</label>
     <input type="text" name="cep" id="cep" v-model="cep" @keyup="fillCep" />
 
-    <label for="road">Rua</label>
-    <input type="text" name="road" id="road" v-model="rua" />
+    <div class="address-group">
+      <div class="address-field">
+        <label for="road">Rua</label>
+        <input type="text" name="road" id="road" v-model="rua" />
+      </div>
 
-    <label for="number">Numero</label>
-    <input type="text" name="number" id="number" v-model="numero" />
+      <div class="address-field">
+        <label for="number">Número</label>
+        <input type="text" name="number" id="number" v-model="numero" />
+      </div>
+    </div>
 
     <label for="district">Bairro</label>
     <input type="text" name="district" id="district" v-model="bairro" />
@@ -28,17 +34,6 @@
 
     <label for="state">Estado</label>
     <input type="text" name="state" id="state" v-model="estado" />
-
-    <!-- <label for="numeroCartao">Número do Cartão</label>
-    <input type="text" name="numeroCartao" id="numeroCartao" v-model="numeroCartao" />
-    <label for="prazo">Prazo</label>
-    <input type="text" name="prazo" id="prazo" v-model="prazo" />
-    <label for="cvc">CVC/CW</label>
-    <input type="text" name="cvc" id="cvc" v-model="cvc" />
-    <label for="nomeCartao">Nome no Cartão</label>
-    <input type="text" name="nomeCartao" id="nomeCartao" v-model="nomeCartao" />
-    <label for="cpf">CPF</label>
-    <input type="text" name="cpf" id="cpf" v-model="cpf" /> -->
 
     <div class="button">
       <slot></slot>
@@ -64,12 +59,6 @@ export default {
         "bairro",
         "cidade",
         "estado",
-        "numeroCartao",
-        "prazo",
-        "cvc",
-        "nomeCartao",
-        "cpf",
-
       ],
       base: "usuario",
       mutation: "UPDATE_USER",
@@ -80,16 +69,30 @@ export default {
   },
   methods: {
     fillCep() {
-      const cep = this.cep.replace(/\D/g, "");
-      if (cep.length === 8) {
-        getCep(cep).then((res) => {
-          this.rua = res.data.logradouro;
-          this.bairro = res.data.bairro;
-          this.cidade = res.data.localidade;
-          this.estado = res.data.uf;
+  const cep = this.cep.replace(/\D/g, "");
+
+  if (cep.length === 8) {
+    getCep(cep)
+      .then((res) => {
+        this.rua = res.data.logradouro;
+        this.bairro = res.data.bairro;
+        this.cidade = res.data.localidade;
+        this.estado = res.data.uf;
+
+        this.$nextTick(() => {
+          console.log("DOM atualizada com:", this.rua, this.bairro, this.cidade, this.estado);
         });
-      }
-    },
+      })
+      .catch((error) => {
+        console.error("Erro ao buscar CEP:", error);
+      });
+  }
+}
+
+
+
+
+
   },
 };
 </script>
@@ -101,8 +104,40 @@ form,
   flex-direction: column;
 }
 
+.address-group {
+  display: flex;
+  gap: 10px; 
+}
+
+.address-field {
+  flex: 1;
+}
+
 .button {
-  grid-column: 2;
   margin-top: 10px;
 }
+label {
+  display: block; 
+  margin-bottom: 5px; 
+
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+  width: 100%;
+  padding: 10px;
+  margin-top: 3px; 
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus {
+  border-color: #87f;
+  outline: none;
+}
+
 </style>
