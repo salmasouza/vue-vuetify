@@ -95,6 +95,7 @@ import { api } from '@/services.js';
 export default {
   name: 'CheckoutComponent',
   components: { UserForm },
+  props: ['produto'],
   data() {
     return {
       step: 1,
@@ -110,20 +111,23 @@ export default {
   computed: {
     ...mapState(['usuario']),
     compra() {
-      return {
-        comprador_id: this.usuario.email,
-        vendedor_id: this.produto.usuario_id,
-        produto: this.produto,
-        endereco: {
-          cep: this.usuario.cep,
-          rua: this.usuario.rua,
-          bairro: this.usuario.bairro,
-          cidade: this.usuario.cidade,
-          estado: this.usuario.estado,
-        },
-        pagamento: this.payment
-      }
-    }
+  console.log('Produto:', this.produto);
+  console.log('Usuario:', this.usuario);
+  return {
+    comprador_id: this.usuario.email,
+    vendedor_id: this.produto.usuario_id,
+    produto: this.produto,
+    endereco: {
+      cep: this.usuario.cep,
+      rua: this.usuario.rua,
+      bairro: this.usuario.bairro,
+      cidade: this.usuario.cidade,
+      estado: this.usuario.estado,
+    },
+    pagamento: this.payment
+  }
+}
+
   },
   methods: {
     async createCheckout() {

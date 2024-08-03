@@ -21,7 +21,8 @@ export default new Router({
     {
       path: '/',
       name: 'homeView',
-      component: HomeView
+      component: HomeView,
+      props: true,
     },
     {
       path: '/produto/:id',

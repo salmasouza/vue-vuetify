@@ -1,9 +1,8 @@
 <template>
   <section class="container-products">
     <transition mode="out-in">
-      
       <div v-if="!loading && products.length" class="products" key="products">
-        <v-card v-for="product in products" :key="product.id" class="product" flat>
+        <v-card v-for="product in products" :key="product.id" class="product" flat @click="redirectToProductPage(product)">
           <v-img v-if="product.fotos && product.fotos.length" :src="product.fotos[0]" :alt="product.nome" height="200px"></v-img>
           <v-card-title>
             <div class="title-container">
@@ -29,22 +28,14 @@
           </v-btn>
         </v-card>
       </div>
-      
-      
       <div v-else-if="!loading && products.length === 0" key="empty-search">
         <p class="empty-search">Busca sem resultados. Tente buscar outro termo.</p>
       </div>
-      
-     
       <LoadingComponent v-if="loading" key="loading" />
     </transition>
-    
-   
     <div v-if="!loading && products.length" class="pagination-container">
       <v-pagination v-model="page" :length="totalPages" circle @input="getProducts"></v-pagination>
     </div>
-    
-   
     <v-alert v-if="showAlert" dense text type="success" @click="showAlert = false" class="success-alert success-alert-green">
       Produto adicionado ao carrinho com sucesso!
     </v-alert>
@@ -110,7 +101,10 @@ export default {
       }).catch(error => {
         console.error('Erro ao adicionar produto ao carrinho:', error);
       });
-    }
+    },
+    redirectToProductPage(product) {
+    this.$router.push(`/produto/${product.id}`);
+  }
   },
   watch: {
     url() {
@@ -125,6 +119,7 @@ export default {
   },
 };
 </script>
+
 
 <style scoped>
 .container-products {
@@ -144,13 +139,14 @@ export default {
   position: relative;
   overflow: hidden;
   transition: all 0.2s;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .product:hover {
   box-shadow: 0 6px 12px rgba(30, 60, 90, 0.2);
-  transform: scale(1.1);
+  transform: scale(1.05);
   z-index: 1;
 }
 

@@ -1,7 +1,6 @@
 <template>
   <section class="product-view">
     <div v-if="product" class="product-container">
-     
       <div class="product-image">
         <v-carousel
           cycle
@@ -11,7 +10,7 @@
           class="carousel"
         >
           <v-carousel-item
-            v-for="(image, index) in product.fotos"
+            v-for="(image, index) in slides"
             :key="index"
           >
             <v-sheet
@@ -26,7 +25,6 @@
         </v-carousel>
       </div>
 
-      
       <div class="product-details">
         <h1>{{ product.nome }}</h1>
         <p class="price">{{ product.preco | numberPrice }}</p>
@@ -39,7 +37,6 @@
         </div>
       </div>
 
-      
       <div class="checkout-form" v-if="finish">
         <CheckoutComponent :produto="product" />
       </div>
@@ -62,31 +59,48 @@ export default {
       product: null,
       finish: false,
       slides: [],
-      colors: [] 
     };
   },
   methods: {
-    getProduct() {
+  getProduct() {
+    if (!this.id) {
+      console.error('ID do produto não fornecido');
       this.product = null;
-      api.get(`/produto/${this.id}`)
-        .then((res) => {
-          this.product = res.data;
-          this.slides = this.product.fotos; 
-          this.colors = this.product.fotos.map(() => 'transparent'); 
-        });
-    },
-    handleComprar() {
-      if (!this.$store.state.login) {
-        this.$store.commit('SET_REDIRECT_AFTER_LOGIN', this.$route.fullPath);
-        this.$router.push({ name: 'login' });
-      } else {
-        this.finish = true;
-      }
+      this.slides = [];
+      return;
     }
+
+    const url = `/produto/${this.id}`;
+
+    api.get(url)
+      .then((res) => {
+        if (res.data && res.data.fotos && Array.isArray(res.data.fotos)) {
+          this.product = res.data;
+          this.slides = this.product.fotos;
+        } else {
+          console.error('Dados do produto inválidos:', res.data);
+          this.product = null;
+          this.slides = [];
+        }
+      })
+      .catch((error) => {
+        console.error('Erro ao obter produto:', error);
+        this.product = null;
+        this.slides = [];
+      });
   },
-  created() {
-    this.getProduct();
-  },
+  handleComprar() {
+    if (!this.$store.state.login) {
+      this.$store.commit('SET_REDIRECT_AFTER_LOGIN', this.$route.fullPath);
+      this.$router.push({ name: 'login' });
+    } else {
+      this.finish = true;
+    }
+  }
+},
+created() {
+  this.getProduct();
+}
 };
 </script>
 
