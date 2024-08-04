@@ -11,6 +11,7 @@
         <v-row>
           <v-col class="text-center">
             <v-btn
+              color="secondary"
               class="custom-btn"
               @click.prevent="createUser"
             >

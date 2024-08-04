@@ -12,6 +12,7 @@
           <v-col class="text-center">
             <v-btn
               class="custom-btn"
+              color="secondary"
               @click.prevent="updateUser"
             >
               Atualizar dados
