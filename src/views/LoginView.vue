@@ -1,6 +1,6 @@
 <template>
   <section class="login">
-    <div v-if="createIsOpen === false">
+    <div>
       <h1>Login</h1>
       <form @submit.prevent="logar">
         <v-text-field
@@ -21,7 +21,7 @@
           type="password"
           required
           dense
-           color="secondary"
+          color="secondary"
         ></v-text-field>
         
         <v-btn
@@ -39,7 +39,6 @@
           color="secondary"
           @click="$router.push('/')"
           class="forgot-link"
-          
         >
           Clique aqui.
         </v-btn>
@@ -48,56 +47,64 @@
         <v-btn
           text
           color="secondary"
-          @click="createIsOpen = true"
+          @click="irParaCriarConta"
         >
           Criar conta
         </v-btn>
       </p>
     </div>
-    <div v-else>
-      <CreateAcc />
-    </div>
+   
   </section>
 </template>
 
 <script>
-import CreateAcc from '@/components/CreateAcc.vue'
+
 
 export default {
   name: 'LoginView',
-  components: { CreateAcc },
   data() {
     return {
-      createIsOpen: false,
       login: {
         email: '',
         password: '',
       },
-      emailError: '' 
-    }
+      emailError: '',
+      createIsOpen: false 
+    };
   },
   methods: {
-    logar() {
-      if (this.emailError) {
-        this.$toast.error('Por favor, corrija os erros antes de enviar.'); 
-        return;
-      }
+    async logar() {
+  if (this.emailError) {
+    this.$toast.error('Por favor, corrija os erros antes de enviar.');
+    return;
+  }
 
-      this.$store.dispatch('getUser', this.login.email).then(() => {
-        const redirectPath = this.$store.state.redirectAfterLogin || { name: 'usuario' };
-        this.$store.commit('setRedirectAfterLogin', null);
-        this.$router.push(redirectPath);
-      });
-    },
+  try {
+    const user = await this.$store.dispatch('login', { email: this.login.email, senha: this.login.password });
+    if (user) {
+      this.$router.push({ name: 'usuario' });
+    }
+  } catch (error) {
+    this.$toast.error('Falha ao fazer login.');
+    console.error('Erro ao fazer login:', error);
+  }
+},
+
+
+
     checkEmail() {
       if (!this.login.email.includes('@')) {
         this.emailError = 'O email deve conter um "@".';
       } else {
         this.emailError = '';
       }
-    }
+    },
+    irParaCriarConta() {
+    this.$router.push({ name: 'criar-conta' }); 
   }
-}
+  }
+};
+
 </script>
 
 <style scoped>
@@ -136,7 +143,7 @@ form {
 }
 
 .error {
-  color: white; /* Atualizado para branco */
+  color: white; 
   font-size: 0.875rem;
   margin-top: 5px;
 }

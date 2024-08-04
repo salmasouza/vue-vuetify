@@ -2,7 +2,7 @@
   <section>
     <div v-if="purchases.length > 0">
       <h2>Compras</h2>
-      <div class="product-wrapper" v-for="purchase, index in purchases" :key="index">
+      <div class="product-wrapper" v-for="(purchase, index) in purchases" :key="index">
         <ProductItem v-if="purchase.produto" :product="purchase.produto">
           <p class="seller"><span>Vendedor:</span> {{ purchase.vendedor_id }}</p>
         </ProductItem>
@@ -30,17 +30,25 @@ export default {
   },
   methods: {
     async getPurchases () {
-      await api.get(`/transacao?comprador_id=${this.usuario.id}`)
-              .then(resp => this.purchases = resp.data)
+      try {
+        const resp = await api.get(`/transacao?comprador_id=${this.usuario.email}`);
+        this.purchases = resp.data;
+      } catch (error) {
+        console.error('Erro ao buscar compras:', error);
+      }
     }
   },
   watch: {
     login () {
-      this.getPurchases()
+      if (this.login) {
+        this.getPurchases();
+      }
     }
   },
   created () {
-    if (this.login) this.getPurchases()
+    if (this.login) {
+      this.getPurchases();
+    }
   }
 }
 </script>

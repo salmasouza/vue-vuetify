@@ -20,15 +20,12 @@ export const api = {
   getCartByUserId(userId) {
     return axiosInstance.get(`/carrinho?usuario_id=${userId}`);
   },
-
-  // Usuários
   getUserById(userId) {
     return axiosInstance.get(`/usuario/${userId}`);
   },
   createUser(userData) {
     return axiosInstance.post('/usuario', userData);
   },
- 
   deleteUser(userId) {
     return axiosInstance.delete(`/usuario/${userId}`);
   },

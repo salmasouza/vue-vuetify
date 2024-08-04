@@ -5,7 +5,7 @@
         <h1>Atualize seus dados</h1>
         <v-row>
           <v-col cols="12">
-            <UserForm />
+            <UserForm :user="user" />
           </v-col>
         </v-row>
         <v-row>
@@ -30,6 +30,11 @@ import { api } from '@/services.js'
 export default {
   name: "UserEdit",
   components: { UserForm },
+  computed: {
+    user() {
+      return this.$store.state.usuario;
+    }
+  },
   methods: {
     async updateUser() {
       try {
@@ -43,23 +48,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-.container {
-  min-height: 100vh; 
-  padding: 0 16px; 
-}
-
-h1 {
-  color: #002244;
-  font-size: 2rem;
-  margin-bottom: 20px;
-  text-align: center;
-}
-
-.custom-btn {
-  background-color: #002244 !important; 
-  color: white !important;
-  margin-top: -50px; 
-}
-</style>

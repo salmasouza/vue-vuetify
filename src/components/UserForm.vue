@@ -24,8 +24,7 @@
         type="password"
         dense
         class="custom-text-field"
-         color="secondary"
-         
+        color="secondary"
       ></v-text-field>
     </div>
 
@@ -35,7 +34,7 @@
       @keyup="fillCep"
       dense
       class="custom-text-field"
-       color="secondary"
+      color="secondary"
     ></v-text-field>
 
     <div class="address-group">
@@ -44,7 +43,7 @@
         label="Rua"
         dense
         class="address-field"
-         color="secondary"
+        color="secondary"
       ></v-text-field>
 
       <v-text-field
@@ -52,7 +51,7 @@
         label="Número"
         dense
         class="address-field"
-         color="secondary"
+        color="secondary"
       ></v-text-field>
     </div>
 
@@ -61,7 +60,7 @@
       label="Bairro"
       dense
       class="custom-text-field"
-       color="secondary"
+      color="secondary"
     ></v-text-field>
 
     <v-text-field
@@ -69,7 +68,7 @@
       label="Cidade"
       dense
       class="custom-text-field"
-       color="secondary"
+      color="secondary"
     ></v-text-field>
 
     <v-text-field
@@ -77,7 +76,7 @@
       label="Estado"
       dense
       class="custom-text-field"
-       color="secondary"
+      color="secondary"
     ></v-text-field>
 
     <div class="button">
@@ -115,7 +114,6 @@ export default {
   methods: {
     fillCep() {
       const cep = this.cep.replace(/\D/g, "");
-
       if (cep.length === 8) {
         getCep(cep)
           .then((res) => {
@@ -136,7 +134,6 @@ export default {
 <style scoped>
 .custom-text-field {
   margin-bottom: 20px; 
-  color:#002244 !important;
 }
 
 .address-group {
@@ -148,7 +145,7 @@ export default {
   flex: 1;
 }
 
-.v-text-field{
-  color:#002244 !important;
+.v-text-field {
+  color: #002244 !important;
 }
 </style>

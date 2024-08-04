@@ -5,7 +5,7 @@
         <h1>Crie sua conta</h1>
         <v-row>
           <v-col>
-            <UserForm />
+            <UserForm ref="userForm" />
           </v-col>
         </v-row>
         <v-row>
@@ -30,30 +30,39 @@ export default {
   name: 'CreateAcc',
   components: { UserForm },
   methods: {
+
+    resetForm() {
+      this.$refs.form.reset(); 
+    },
+
     async createUser() {
-    try {
-      
-      const { nome, email, senha, cep, rua, numero, bairro, cidade, estado } = this.$store.state.usuario;
+      try {
+        const { nome, email, senha, cep, rua, numero, bairro, cidade, estado } = this.$store.state.usuario;
 
-      const userPayload = {
-        nome,
-        email,
-        senha,
-        cep,
-        rua,
-        numero,
-        bairro,
-        cidade,
-        estado
-      };
+        const userPayload = {
+          nome,
+          email,
+          senha,
+          cep,
+          rua,
+          numero,
+          bairro,
+          cidade,
+          estado
+        };
 
-      await this.$store.dispatch('createUser', userPayload);
-      await this.$store.dispatch('getUser', email);
-      await this.$router.push({ name: 'usuario' });
-    } catch (error) {
-      console.error('Erro ao criar usuário:', error);
+        await this.$store.dispatch('createUser', userPayload);
+        this.$toast.success('Usuário criado com sucesso!'); 
+        this.$router.push({ name: 'login' }); 
+        
+        if (this.$refs.userForm && typeof this.$refs.userForm.resetForm === 'function') {
+          this.$refs.userForm.resetForm(); 
+        }
+      } catch (error) {
+        this.$toast.error('Erro ao criar usuário.'); 
+        console.error('Erro ao criar usuário:', error);
+      }
     }
-  }
   }
 }
 </script>

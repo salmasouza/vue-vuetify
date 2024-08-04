@@ -53,6 +53,7 @@ export default new Vuex.Store({
     async getUserProducts({ commit, state }) {
       try {
         const res = await api.get(`/produto?usuario_id=${state.usuario.id}`);
+        console.log('Produtos recebidos:', res.data); 
         if (res.status === 200) {
           commit('UPDATE_USER_PRODUCTS', res.data);
         }
@@ -60,26 +61,26 @@ export default new Vuex.Store({
         console.error('Erro ao buscar produtos do usuário:', error);
       }
     },
-    getUser({ commit }, email) {
-      return api.get(`/usuario/${email}`)
-        .then(res => {
-          if (res.status === 200) {
-            commit('UPDATE_USER', res.data);
-            commit('UPDATE_LOGIN', true);
-          } else {
-            console.error(`Erro ao buscar usuário: ${res.status}`);
-          }
-        })
-        .catch(error => {
-          console.error('Erro ao buscar usuário:', error);
-        });
-    },
-    async createUser({ commit }, payload) {
+    
+    async getUser({ commit }, userId) {
       try {
-        const res = await api.createUser(payload);
+        const res = await api.get(`/usuario/${userId}`);
+        if (res.status === 200) {
+          commit('UPDATE_USER', res.data);
+          commit('UPDATE_LOGIN', true);
+        } else {
+          console.error(`Erro ao buscar usuário: ${res.status}`);
+        }
+      } catch (error) {
+        console.error('Erro ao buscar usuário:', error);
+      }
+    },
+    async createUser({ commit }, userData) {
+      try {
+        const res = await api.createUser(userData);
         if (res.status === 201) {
           console.log('Usuário criado com sucesso:', res.data);
-          commit('UPDATE_USER', { id: payload.email });
+          commit('UPDATE_USER', { id: userData.email });
           return res.data;
         }
       } catch (error) {
@@ -88,24 +89,26 @@ export default new Vuex.Store({
         throw new Error(`Erro ao criar usuário: ${errorMsg}`);
       }
     },
-    async login({ commit, dispatch }, { email, senha }) {
+    async login({ commit }, { email, senha }) {
       try {
-        const res = await api.loginUser(email, senha);
-        if (res.status === 200) {
-          commit('UPDATE_USER', res.data);
-          commit('UPDATE_LOGIN', true);
-  
-          // Fetch and update user data after successful login
-          await dispatch('getUser', res.data.email);
-          
-          return res.data;
+        const response = await api.get(`/usuario?email=${email}`);
+        if (response.status === 200) {
+          const user = response.data.find(user => user.senha === senha);
+          if (user) {
+            commit('UPDATE_USER', user);
+            commit('UPDATE_LOGIN', true);
+            return user;
+          } else {
+            throw new Error('Email ou senha incorretos.');
+          }
+        } else {
+          console.error(`Erro ao buscar usuário: ${response.status}`);
         }
       } catch (error) {
         console.error('Erro ao fazer login:', error);
         throw new Error('Falha ao fazer login');
       }
     },
-    
     logout({ commit }) {
       commit('UPDATE_USER', {
         id: '',

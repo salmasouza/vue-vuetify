@@ -81,7 +81,7 @@ export default {
         vendido: "false",
         fotos: []
       },
-      files: [] // Novo campo para armazenar os arquivos selecionados
+      files: [] 
     };
   },
   watch: {
@@ -97,7 +97,7 @@ export default {
         Array.from(this.files).forEach(file => {
           const reader = new FileReader();
           reader.onload = (e) => {
-            console.log("File content:", e.target.result); // Log para depuração
+            console.log("File content:", e.target.result); 
             this.product.fotos.push(e.target.result);
           };
           reader.readAsDataURL(file);
@@ -110,7 +110,7 @@ export default {
       try {
         await api.post("/produto", this.product);
         await this.$store.dispatch('getUserProducts');
-        this.limpar(); // Limpar o formulário após adicionar o produto
+        this.limpar(); 
       } catch (error) {
         console.error("Error adding product:", error);
       }
@@ -123,7 +123,7 @@ export default {
         vendido: "false",
         fotos: []
       };
-      this.files = []; // Limpar os arquivos selecionados
+      this.files = []; 
     }
   }
 };
