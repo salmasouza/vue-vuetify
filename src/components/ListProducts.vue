@@ -2,14 +2,18 @@
   <section class="container-products">
     <transition mode="out-in">
       <div v-if="!loading && products.length" class="products" key="products">
-        <v-card v-for="product in products" :key="product.id" class="product" flat @click="redirectToProductPage(product)">
-          <v-img v-if="product.fotos && product.fotos.length" :src="product.fotos[0]" :alt="product.nome" height="200px"></v-img>
+        <v-card v-for="product in products" :key="product.id" class="product" flat
+          @click="redirectToProductPage(product)">
+          <v-img v-if="product.fotos && product.fotos.length" :src="product.fotos[0]" :alt="product.nome" height="200px"
+            contain></v-img>
+
           <v-card-title>
             <div class="title-container">
               <h2 class="name">{{ product.nome }}</h2>
               <v-btn icon @click.stop="toggleFavorite(product)" class="favorite-btn">
-  <v-icon :color="product.favorito ? 'secondary' : ''">{{ product.favorito ? 'mdi-heart' : 'mdi-heart-outline' }}</v-icon>
-</v-btn>
+                <v-icon :color="product.favorito ? 'secondary' : ''">{{ product.favorito ? 'mdi-heart' :
+                  'mdi-heart-outline' }}</v-icon>
+              </v-btn>
 
             </div>
           </v-card-title>
@@ -37,7 +41,8 @@
     <div v-if="!loading && products.length" class="pagination-container">
       <v-pagination v-model="page" :length="totalPages" circle @input="getProducts"></v-pagination>
     </div>
-    <v-alert v-if="showAlert" dense text type="success" @click="showAlert = false" class="success-alert success-alert-green">
+    <v-alert v-if="showAlert" dense text type="success" @click="showAlert = false"
+      class="success-alert success-alert-green">
       Produto adicionado ao carrinho com sucesso!
     </v-alert>
   </section>
@@ -125,14 +130,14 @@ export default {
 .container-products {
   margin: 0 auto;
   max-width: 1000px;
-  padding: 30px; 
+  padding: 30px;
 }
 
 .products {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-gap: 30px;
-  margin-bottom: 60px; 
+  margin-bottom: 60px;
 }
 
 .product {
@@ -173,7 +178,7 @@ export default {
   display: flex;
   gap: 5px;
   margin-bottom: 10px;
-  
+
 }
 
 .favorite-btn,
@@ -215,6 +220,10 @@ export default {
 }
 
 .rating .v-icon {
-  color: yellow; 
+  color: yellow;
+}
+
+.v-img {
+  object-fit: cover;
 }
 </style>

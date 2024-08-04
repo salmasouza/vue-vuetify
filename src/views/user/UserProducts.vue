@@ -3,19 +3,20 @@
     <h2>Adicionar Produto</h2>
     <AddProduct />
     <h2>Seus Produtos</h2>
-    <transition-group v-if="usuario_produtos" name="list" tag="ul">
-      <li v-for="produto in usuario_produtos" :key="produto.id">
+    <transition-group v-if="usuario_produtos" name="list" tag="ul" class="product-list">
+      <li v-for="produto in usuario_produtos" :key="produto.id" class="product-item">
         <ProductItem :product="produto">
-  <p>{{ produto.descricao }}</p>
-  <button class="remove-btn" @click="deleteProduct(produto.id)">
-    <v-icon color="red" class="delete">mdi-delete</v-icon>
-  </button>
-</ProductItem>
+          <p>{{ produto.descricao }}</p>
+          <button class="remove-btn" @click="deleteProduct(produto.id)">
+            <v-icon color="red" class="delete">mdi-delete</v-icon>
+          </button>
+        </ProductItem>
         <hr class="solid" />
       </li>
     </transition-group>
   </section>
 </template>
+
 
 <script>
 import { mapState, mapActions } from "vuex";
@@ -43,22 +44,33 @@ export default {
     }
   },
   watch: {
-  login() {
+    login() {
+      if (this.login) {
+        this.getUserProducts();
+      }
+    }
+  },
+  created() {
     if (this.login) {
       this.getUserProducts();
     }
   }
-},
-created() {
-  if (this.login) {
-    this.getUserProducts();
-  }
-}
 }
 </script>
 
 <style scoped>
 h2 {
+  margin-bottom: 20px;
+}
+
+.product-list {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.product-item {
+  position: relative;
   margin-bottom: 20px;
 }
 

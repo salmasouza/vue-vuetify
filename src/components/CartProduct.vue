@@ -1,38 +1,33 @@
 <template>
-  
-  <div class="cart-container">
-    <div class="header">
-      <h2 class="cart-title">Seu Carrinho de Compras</h2>
+  <div class="container-products">
+    <div class="header mt-1">
+      <v-icon color="secondary">mdi-cart</v-icon>
+      <span class="cart-title text-center">Seu carrinho</span>
     </div>
+    <div v-if="!loading && cartItems.length" class="products">
+      <v-card v-for="item in cartItems" :key="item.id" class="product" flat>
+        <v-img v-if="item.produto.fotos && item.produto.fotos.length" :src="item.produto.fotos[0]"
+          :alt="item.produto.nome" height="200px" contain></v-img>
 
-    <template v-if="cartItems.length > 0">
-      <div class="cards-wrapper">
-        <v-card v-for="item in cartItems" :key="item.id" class="cart-card">
-          <v-img
-            v-if="item.produto.fotos && item.produto.fotos.length"
-            :src="item.produto.fotos[0]"
-            :alt="item.produto.nome"
-            height="150px"
-          ></v-img>
-          <v-card-title>
-            <div class="title-container">
-              <h2 class="name">{{ item.produto.nome }}</h2>
-            </div>
-          </v-card-title>
-          <v-card-subtitle class="price">{{ item.produto.preco | numberPrice }}</v-card-subtitle>
-          <v-card-text>
-            <p class="description">{{ item.produto.descricao }}</p>
-          </v-card-text>
-          <v-card-actions>
-            <v-btn icon @click="openDialog(item.id)" class="remove-btn">
-              <v-icon class="delete-icon">mdi-delete</v-icon>
+        <v-card-title>
+          <div class="title-container">
+            <h2 class="name">{{ item.produto.nome }}</h2>
+            <v-btn icon @click="openDialog(item.id)" class="favorite-btn">
+              <v-icon>mdi-delete</v-icon>
             </v-btn>
-          </v-card-actions>
-        </v-card>
-      </div>
-    </template>
-    <p v-else class="empty-message">Seu carrinho está vazio.</p>
+          </div>
+        </v-card-title>
+        <v-card-subtitle class="price">{{ item.produto.preco | numberPrice }}</v-card-subtitle>
+        <v-card-text>
+          <p class="description">{{ item.produto.descricao }}</p>
+        </v-card-text>
+      </v-card>
+    </div>
+    <p v-else-if="!loading && cartItems.length === 0" class="empty-search">Seu carrinho está vazio.</p>
 
+    <div v-if="!loading && cartItems.length" class="pagination-container">
+      <v-pagination v-model="page" :length="totalPages" circle @input="fetchCartItems"></v-pagination>
+    </div>
 
     <v-dialog v-model="dialog.visible" max-width="500px">
       <v-card>
@@ -52,7 +47,7 @@
 
 <script>
 import { api } from '@/services.js';
-import { VDialog, VCard, VCardTitle, VCardText, VCardActions, VBtn, VIcon, VImg, VCardSubtitle, VSpacer } from 'vuetify/lib';
+import { VDialog, VCard, VCardTitle, VCardText, VCardActions, VBtn, VIcon, VImg, VCardSubtitle, VSpacer, VPagination } from 'vuetify/lib';
 
 export default {
   name: "CartProduct",
@@ -66,7 +61,8 @@ export default {
     VIcon,
     VImg,
     VCardSubtitle,
-    VSpacer
+    VSpacer,
+    VPagination
   },
   data() {
     return {
@@ -74,8 +70,17 @@ export default {
       dialog: {
         visible: false,
         itemId: null
-      }
+      },
+      loading: true,
+      page: 1,
+      itemsPerPage: 3,
+      totalItems: 0,
     }
+  },
+  computed: {
+    totalPages() {
+      return Math.ceil(this.totalItems / this.itemsPerPage);
+    },
   },
   created() {
     this.fetchCartItems();
@@ -83,14 +88,16 @@ export default {
   methods: {
     fetchCartItems() {
       const userId = this.$store.state.usuario.id;
-      api.get(`/carrinho?usuario_id=${userId}`).then(response => {
+      api.get(`/carrinho?usuario_id=${userId}&_page=${this.page}&_limit=${this.itemsPerPage}`).then(response => {
+        this.totalItems = Number(response.headers['x-total-count']);
         this.cartItems = response.data;
+        this.loading = false;
       }).catch(error => {
         console.error('Erro ao buscar carrinho:', error);
+        this.loading = false;
       });
     },
     openDialog(itemId) {
-      console.log("teste")
       this.dialog.visible = true;
       this.dialog.itemId = itemId;
     },
@@ -101,12 +108,16 @@ export default {
       }
     },
     removeFromCart(itemId) {
-      console.log("teste")
       this.$store.dispatch('removeFromCart', itemId).then(() => {
         this.fetchCartItems();
       }).catch(error => {
         console.error('Erro ao remover produto do carrinho:', error);
       });
+    }
+  },
+  watch: {
+    page() {
+      this.fetchCartItems();
     }
   },
   filters: {
@@ -118,41 +129,47 @@ export default {
 </script>
 
 <style scoped>
-.cart-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 16px;
+.container-products {
+  margin: 0 auto;
+  max-width: 1000px;
+  padding: 30px;
 }
 
 .header {
-  margin-bottom: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
   text-align: center;
 }
 
 .cart-title {
-  font-size: 2rem;
+  color: #002244;
+  /* Cor secundária */
+  font-size: 28px;
+  /* Aumentar a fonte */
   font-weight: bold;
-  color: #333;
-  margin: 0;
+  /* Negrito */
+  margin-left: 10px;
 }
 
-.cards-wrapper {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-  justify-content: center;
+.products {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-gap: 30px;
+  margin-bottom: 60px;
 }
 
-.cart-card {
-  width: 200px; 
-  max-width: 100%;
-  border: 1px solid #ccc; 
-  border-radius: 4px; 
+.product {
+  position: relative;
+  overflow: hidden;
   transition: all 0.2s;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-.cart-card:hover {
+.product:hover {
   box-shadow: 0 6px 12px rgba(30, 60, 90, 0.2);
   transform: scale(1.05);
   z-index: 1;
@@ -177,23 +194,24 @@ export default {
   margin-bottom: 10px;
 }
 
-.remove-btn {
+.favorite-btn {
   position: absolute;
   top: 10px;
   right: 10px;
 }
 
-.empty-message {
+.empty-search {
   text-align: center;
   font-size: 1.5rem;
   color: #666;
 }
 
-h2 {
-  color: #002244 !important;
+.pagination-container {
+  text-align: center;
+  padding: 10px 0;
 }
 
-.delete-icon {
-  color: #002244 !important;
+.v-img {
+  object-fit: cover;
 }
 </style>

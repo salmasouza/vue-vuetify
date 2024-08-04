@@ -2,63 +2,36 @@
   <v-container>
     <v-form @submit.prevent="addProduct">
       <v-row>
-        <v-col cols="12" md="6">
-          <v-text-field
-            v-model="product.nome"
-            label="Nome"
-            dense
-            color="secondary"
-          ></v-text-field>
-        </v-col>
-        <v-col cols="12" md="6">
-          <v-text-field
-            v-model="product.preco"
-            label="Preço"
-            type="number"
-            dense
-            color="secondary"
-          ></v-text-field>
+        <v-col cols="12">
+          <v-text-field v-model="product.nome" label="Nome" dense class="custom-text-field"
+            color="secondary"></v-text-field>
         </v-col>
       </v-row>
 
       <v-row>
         <v-col cols="12" md="6">
-          <v-file-input
-            v-model="files"
-            label="Fotos"
-            multiple
-            dense
-            color="secondary"
-          ></v-file-input>
+          <v-file-input v-model="files" label="Fotos" multiple dense class="custom-file-input"
+            color="secondary"></v-file-input>
+        </v-col>
+        <v-col cols="12" md="6">
+          <v-text-field v-model="product.preco" label="Preço" type="text" dense class="custom-text-field"
+            color="secondary"></v-text-field>
         </v-col>
       </v-row>
 
       <v-row>
         <v-col cols="12">
-          <v-textarea
-            v-model="product.descricao"
-            label="Descrição"
-            dense
-            color="secondary"
-          ></v-textarea>
+          <v-textarea v-model="product.descricao" label="Descrição" dense class="custom-textarea"
+            color="secondary"></v-textarea>
         </v-col>
       </v-row>
 
-      <v-row>
-        <v-col cols="12">
-          <v-btn
-            type="submit"
-            color="secondary"
-            class="mr-2"
-            style="background-color: #002244; color: white;"
-          >
+      <v-row class="justify-center"> <!-- Add this class to center the buttons -->
+        <v-col cols="auto">
+          <v-btn type="submit" color="secondary" class="mr-2 custom-btn">
             Adicionar Produto
           </v-btn>
-          <v-btn
-            @click.prevent="limpar"
-            color="secondary"
-            style="background-color: #002244; color: white;"
-          >
+          <v-btn @click.prevent="limpar" color="secondary" class="custom-btn">
             Limpar Produto
           </v-btn>
         </v-col>
@@ -81,7 +54,7 @@ export default {
         vendido: "false",
         fotos: []
       },
-      files: [] 
+      files: []
     };
   },
   watch: {
@@ -97,7 +70,7 @@ export default {
         Array.from(this.files).forEach(file => {
           const reader = new FileReader();
           reader.onload = (e) => {
-            console.log("File content:", e.target.result); 
+            console.log("File content:", e.target.result);
             this.product.fotos.push(e.target.result);
           };
           reader.readAsDataURL(file);
@@ -110,7 +83,7 @@ export default {
       try {
         await api.post("/produto", this.product);
         await this.$store.dispatch('getUserProducts');
-        this.limpar(); 
+        this.limpar();
       } catch (error) {
         console.error("Error adding product:", error);
       }
@@ -123,7 +96,7 @@ export default {
         vendido: "false",
         fotos: []
       };
-      this.files = []; 
+      this.files = [];
     }
   }
 };
@@ -140,7 +113,38 @@ export default {
   margin-bottom: 20px;
 }
 
+.custom-text-field {
+  margin-bottom: -20px;
+}
+
+.custom-file-input .v-input__control {
+  border: none;
+}
+
+.custom-file-input .v-file-input__input {
+  padding: 0;
+  margin-bottom: -50px;
+}
+
+.custom-textarea {
+  margin-bottom: -10px;
+  border: none;
+  border-radius: 4px;
+  padding: 8px;
+}
+
+.custom-btn {
+  background-color: #002244;
+  color: white;
+  margin-top: -50px;
+}
+
 .v-btn {
   margin-right: 10px;
+}
+
+.justify-center {
+  display: flex;
+  justify-content: center;
 }
 </style>

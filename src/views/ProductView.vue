@@ -2,22 +2,10 @@
   <v-container fluid>
     <template v-if="product">
       <v-row>
-    
         <v-col cols="12" md="4" lg="5">
-          <v-carousel
-            cycle
-            height="400px"
-            class="carousel"
-            :show-arrows="true"
-          >
-            <v-carousel-item
-              v-for="(image, index) in slides"
-              :key="index"
-            >
-              <v-sheet
-                height="100%"
-                :color="'transparent'"
-              >
+          <v-carousel cycle height="400px" class="carousel" :show-arrows="true">
+            <v-carousel-item v-for="(image, index) in slides" :key="index">
+              <v-sheet height="100%" color="transparent">
                 <div class="d-flex fill-height justify-center align-center">
                   <img :src="image" :alt="product.nome" class="carousel-image" />
                 </div>
@@ -33,12 +21,7 @@
             <p class="description">{{ product.descricao }}</p>
             <div class="product-info">
               <transition mode="out-in">
-                <v-btn
-                  v-if="!finish && product.vendido === 'false'"
-                  @click="handleComprar"
-                  class="btn-buy primary-btn"
-                  
-                >
+                <v-btn v-if="!finish && product.vendido === 'false'" @click="handleComprar" class="btn-buy primary-btn">
                   Comprar
                 </v-btn>
               </transition>
@@ -117,6 +100,7 @@ export default {
 };
 </script>
 
+
 <style scoped>
 .carousel {
   position: relative;
@@ -125,7 +109,7 @@ export default {
 .carousel-image {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   border-radius: 4px;
 }
 

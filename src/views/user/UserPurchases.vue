@@ -20,7 +20,7 @@ import { mapState } from 'vuex'
 
 export default {
   components: { ProductItem },
-  data () {
+  data() {
     return {
       purchases: []
     }
@@ -29,9 +29,9 @@ export default {
     ...mapState(["usuario", "login"])
   },
   methods: {
-    async getPurchases () {
+    async getPurchases() {
       try {
-        const resp = await api.get(`/transacao?comprador_id=${this.usuario.email}`);
+        const resp = await api.get(`/transacao?comprador_id=${this.usuario.email}`); // Use email como comprador_id
         this.purchases = resp.data;
       } catch (error) {
         console.error('Erro ao buscar compras:', error);
@@ -39,13 +39,13 @@ export default {
     }
   },
   watch: {
-    login () {
+    login() {
       if (this.login) {
         this.getPurchases();
       }
     }
   },
-  created () {
+  created() {
     if (this.login) {
       this.getPurchases();
     }
