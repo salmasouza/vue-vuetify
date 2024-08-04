@@ -8,8 +8,9 @@
             <div class="title-container">
               <h2 class="name">{{ product.nome }}</h2>
               <v-btn icon @click.stop="toggleFavorite(product)" class="favorite-btn">
-                <v-icon>{{ product.favorito ? 'mdi-heart' : 'mdi-heart-outline' }}</v-icon>
-              </v-btn>
+  <v-icon :color="product.favorito ? 'secondary' : ''">{{ product.favorito ? 'mdi-heart' : 'mdi-heart-outline' }}</v-icon>
+</v-btn>
+
             </div>
           </v-card-title>
           <v-card-subtitle class="price">{{ product.preco | numberPrice }}</v-card-subtitle>
@@ -24,7 +25,7 @@
             </div>
           </v-card-text>
           <v-btn icon @click.stop="handleAddToCart(product)" class="cart-btn">
-            <v-icon>mdi-cart</v-icon>
+            <v-icon color="#002244">mdi-cart</v-icon>
           </v-btn>
         </v-card>
       </div>
@@ -216,5 +217,4 @@ export default {
 .rating .v-icon {
   color: yellow; 
 }
-
 </style>

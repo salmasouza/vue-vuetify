@@ -3,14 +3,21 @@
     <v-row justify="center" align="center">
       <v-col cols="auto">
         <h1>Crie sua conta</h1>
-        <UserForm>
-          <v-btn
-            class="btn-form custom-btn"
-            @click.prevent="createUser"
-          >
-            Criar Usuário
-          </v-btn>
-        </UserForm>
+        <v-row>
+          <v-col>
+            <UserForm />
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col class="text-center">
+            <v-btn
+              class="custom-btn"
+              @click.prevent="createUser"
+            >
+              Criar Usuário
+            </v-btn>
+          </v-col>
+        </v-row>
       </v-col>
     </v-row>
   </v-container>
@@ -20,15 +27,34 @@
 import UserForm from './UserForm.vue'
 
 export default {
-  name: 'CreateLogin',
+  name: 'CreateAcc',
   components: { UserForm },
   methods: {
     async createUser() {
-      await this.$store.dispatch('createUser', this.$store.state.usuario)
-      await this.$store.dispatch('getUser', this.$store.state.usuario.email)
-      await this.$router.push({ name: 'usuario' })
+    try {
+      
+      const { nome, email, senha, cep, rua, numero, bairro, cidade, estado } = this.$store.state.usuario;
+
+      const userPayload = {
+        nome,
+        email,
+        senha,
+        cep,
+        rua,
+        numero,
+        bairro,
+        cidade,
+        estado
+      };
+
+      await this.$store.dispatch('createUser', userPayload);
+      await this.$store.dispatch('getUser', email);
+      await this.$router.push({ name: 'usuario' });
+    } catch (error) {
+      console.error('Erro ao criar usuário:', error);
     }
-  },
+  }
+  }
 }
 </script>
 
@@ -43,10 +69,6 @@ h1 {
   font-size: 2rem;
   margin-bottom: 20px;
   text-align: center;
-}
-
-.btn-form {
-  margin-top: 20px; 
 }
 
 .custom-btn {

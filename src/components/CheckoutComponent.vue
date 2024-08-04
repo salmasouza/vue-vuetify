@@ -1,83 +1,113 @@
 <template>
   <v-stepper v-model="step">
     <v-stepper-header>
-      <v-stepper-step :complete="step > 1" step="1">
-        <v-icon>mdi-home-outline</v-icon>
+      <v-stepper-step :complete="step > 1" color="secondary" step="1">
+        <v-icon color="secondary">mdi-home-outline</v-icon>
         Endereço para Envio
       </v-stepper-step>
 
       <v-divider></v-divider>
 
-      <v-stepper-step :complete="step > 2" step="2">
-        <v-icon>mdi-credit-card-outline</v-icon>
+      <v-stepper-step color="secondary" :complete="step > 2" step="2">
+        <v-icon color="secondary">mdi-credit-card-outline</v-icon>
         Pagamento
       </v-stepper-step>
     </v-stepper-header>
 
     <v-stepper-items>
       <v-stepper-content step="1">
-        <div class="user-form-section">
+        <div class="user-form-section" color="secondary">
           <h2>Endereço para Envio</h2>
           <div class="user-form">
             <UserForm />
           </div>
         </div>
 
-        <v-btn class="btn-custom" @click="step = 2">
-          Continuar
-        </v-btn>
+        <v-row justify="center">
+          <v-col cols="auto">
+            <v-btn color="secondary" class="btn-custom" @click="step = 2">
+              Continuar
+            </v-btn>
+          </v-col>
+        </v-row>
       </v-stepper-content>
 
       <v-stepper-content step="2">
         <h2>Pagamento</h2>
         <form class="payment" @submit.prevent="finishCheckout">
-          <v-radio-group v-model="paymentMethod" mandatory>
-            <v-radio label="Cartão de Crédito" value="cartao"></v-radio>
-            <v-radio label="PIX" value="pix"></v-radio>
-            <v-radio label="Boleto" value="boleto"></v-radio>
+          <v-radio-group color="secondary" v-model="paymentMethod" mandatory>
+            <v-radio color="secondary" label="Cartão de Crédito" value="cartao"></v-radio>
+            <v-radio color="secondary" label="PIX" value="pix"></v-radio>
+            <v-radio color="secondary" label="Boleto" value="boleto"></v-radio>
           </v-radio-group>
 
           <div v-if="paymentMethod === 'cartao'">
-            <label for="numeroCartao">Número do Cartão:</label>
-            <input type="text" id="numeroCartao" v-model="payment.numeroCartao" required>
+            <v-text-field
+              color="secondary"
+              v-model="payment.numeroCartao"
+              label="Número do Cartão"
+              type="text"
+              dense
+              class="custom-text-field"
+              @input="formatCardNumber"
+              maxlength="19"
+              required
+            ></v-text-field>
 
             <div class="payment-details">
-              <div class="payment-group">
-                <label for="prazo">Prazo:</label>
-                <input type="text" id="prazo" v-model="payment.prazo" required>
-              </div>
+              <v-text-field
+                v-model="payment.prazo"
+                label="Prazo"
+                type="text"
+                dense
+                class="payment-group"
+                required
+                color="secondary"
+              ></v-text-field>
 
-              <div class="payment-group">
-                <label for="cvc">CVC:</label>
-                <input type="text" id="cvc" v-model="payment.cvc" required>
-              </div>
+              <v-text-field
+                v-model="payment.cvc"
+                label="CVC"
+                type="text"
+                dense
+                class="payment-group"
+                required
+                color="secondary"
+              ></v-text-field>
             </div>
 
-            <label for="nomeCartao">Nome no Cartão:</label>
-            <input type="text" id="nomeCartao" v-model="payment.nomeCartao" required>
+            <v-text-field
+              v-model="payment.nomeCartao"
+              label="Nome no Cartão"
+              type="text"
+              dense
+              class="custom-text-field"
+              required
+              color="secondary"
+            ></v-text-field>
           </div>
 
-          <div>
-            <label for="cpf">CPF:</label>
-            <input
-              type="text"
-              id="cpf"
-              v-model="payment.cpf"
-              @input="validateCPF"
-              v-mask="'###.###.###-##'"
-              placeholder="###.###.###-##"
-              :class="{ invalid: !validCpf && payment.cpf.length > 0 }"
-              required
-            >
-            <span v-if="!validCpf && payment.cpf.length > 0" class="error-message">CPF inválido</span>
-          </div>
+          <v-text-field
+            v-model="payment.cpf"
+            label="CPF"
+            type="text"
+            @input="validateCPF"
+            v-mask="'###.###.###-##'"
+            placeholder="###.###.###-##"
+            dense
+            class="custom-text-field"
+            :class="{ invalid: !validCpf && payment.cpf.length > 0 }"
+            required
+            color="secondary"
+          ></v-text-field>
+          <span v-if="!validCpf && payment.cpf.length > 0" class="error-message">CPF inválido</span>
 
           <div class="buttons-container">
-            <v-btn class="btn-custom" type="submit" v-if="$store.state.login">
+            <v-btn color="secondary" class="btn-custom" type="submit" v-if="$store.state.login">
               Finalizar Compra
             </v-btn>
 
-            <v-btn class="btn-custom" @click="step = 1" v-if="$store.state.login">
+            <v-btn color="secondary" class="btn-custom" @click="step = 1" v-if="$store.state.login">
               Voltar
             </v-btn>
           </div>
@@ -86,6 +116,7 @@
     </v-stepper-items>
   </v-stepper>
 </template>
+
 
 <script>
 import { mapState } from 'vuex';
@@ -134,21 +165,43 @@ export default {
       await this.$router.push({ name: 'compras' });
     },
 
-    async createUser() {
-      await this.$store.dispatch('createUser', this.$store.state.usuario);
-      await this.$store.dispatch('getUser', this.$store.state.usuario.email);
-      await this.createCheckout();
-    },
-
-    finishCheckout() {
+    async finishCheckout() {
       if (this.validCpf) {
-        this.$store.state.login
-          ? this.createCheckout()
-          : this.createUser();
+        if (this.$store.state.login) {
+          await this.createCheckout();
+        } else {
+          await this.createUser();
+        }
       } else {
         alert("CPF inválido. Por favor, corrija o CPF antes de finalizar a compra.");
       }
     },
+
+    async createUser() {
+    try {
+      // Obtenha apenas os campos necessários do estado
+      const { nome, email, senha, cep, rua, numero, bairro, cidade, estado } = this.$store.state.usuario;
+
+      // Prepare o objeto do usuário com os campos desejados
+      const userPayload = {
+        nome,
+        email,
+        senha,
+        cep,
+        rua,
+        numero,
+        bairro,
+        cidade,
+        estado
+      };
+
+      await this.$store.dispatch('createUser', userPayload);
+      await this.$store.dispatch('getUser', email);
+      await this.$router.push({ name: 'usuario' });
+    } catch (error) {
+      console.error('Erro ao criar usuário:', error);
+    }
+  },
 
     validateCPF() {
       const cpf = this.payment.cpf.replace(/\D/g, '');
@@ -194,10 +247,21 @@ export default {
       }
 
       this.validCpf = true;
+    },
+
+    formatCardNumber() {
+      const cleaned = this.payment.numeroCartao.replace(/\D/g, '');
+      const match = cleaned.match(/.{1,4}/g);
+      if (match) {
+        this.payment.numeroCartao = match.join(' ');
+      } else {
+        this.payment.numeroCartao = cleaned;
+      }
     }
   }
 }
 </script>
+
 
 <style scoped>
 .user-form-section,
@@ -210,22 +274,9 @@ h2 {
   margin: 20px 0;
 }
 
-input[type="text"],
-input[type="email"],
-input[type="password"] {
-  width: 100%;
-  padding: 10px;
-  margin-top: 3px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  box-sizing: border-box;
-}
-
-input[type="text"]:focus,
-input[type="email"]:focus,
-input[type="password"]:focus {
-  border-color: #87f;
-  outline: none;
+.custom-text-field {
+  margin-bottom: 20px;
+  color:#002244;
 }
 
 .payment-details {
@@ -242,11 +293,11 @@ input[type="password"]:focus {
   display: flex;
   gap: 10px;
   margin-top: 20px;
-  justify-content: center; /* Centraliza os botões */
+  justify-content: center;
 }
 
 .btn-custom {
-  background-color: #87f;
+  background-color: #002244;
   color: white;
   border: none;
   padding: 10px 20px;
@@ -261,7 +312,7 @@ input[type="password"]:focus {
 }
 
 .btn-custom:hover {
-  background-color: #0056b3;
+  background-color: #002244;
   color: white;
 }
 

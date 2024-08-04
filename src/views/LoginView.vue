@@ -9,8 +9,9 @@
           type="email"
           :class="{ 'invalid': emailError }"
           @blur="checkEmail"
-          outlined
+          required
           dense
+          color="secondary"
         ></v-text-field>
         <p v-if="emailError" class="error">{{ emailError }}</p>
         
@@ -18,8 +19,9 @@
           v-model="login.password"
           label="Senha"
           type="password"
-          outlined
+          required
           dense
+           color="secondary"
         ></v-text-field>
         
         <v-btn
@@ -34,9 +36,10 @@
         Esqueceu a senha?
         <v-btn
           text
-          color="primary"
+          color="secondary"
           @click="$router.push('/')"
           class="forgot-link"
+          
         >
           Clique aqui.
         </v-btn>
@@ -44,7 +47,7 @@
       <p class="create-acc">
         <v-btn
           text
-          color="primary"
+          color="secondary"
           @click="createIsOpen = true"
         >
           Criar conta
@@ -133,7 +136,7 @@ form {
 }
 
 .error {
-  color: red;
+  color: white; /* Atualizado para branco */
   font-size: 0.875rem;
   margin-top: 5px;
 }

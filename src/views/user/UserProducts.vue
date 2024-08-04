@@ -7,7 +7,9 @@
       <li v-for="produto, index in usuario_produtos" :key="produto.id + index">
         <ProductItem :product="produto">
           <p>{{ produto.descricao }}</p>
-          <button class="delete" @click="deleteProduct(produto.id)">Deletar</button>
+          <button class="remove-btn" @click="deleteProduct(produto.id)">
+            <v-icon color="red" class="delete">mdi-delete</v-icon>
+          </button>
         </ProductItem>
         <hr class="solid" />
       </li>
@@ -49,6 +51,7 @@ export default {
 </script>
 
 <style scoped>
+
 h2 {
   margin-bottom: 20px;
 }
@@ -64,8 +67,10 @@ h2 {
   transition: all .3s;
 }
 
+
+
 .delete {
-  background: url('../../assets/remove.svg') no-repeat center center;
+  background: none;
   border: none;
   cursor: pointer;
   height: 24px;
@@ -79,5 +84,11 @@ h2 {
 
 hr.solid {
   border-top: 1px solid #f4f7fc;
+}
+
+.remove-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
 }
 </style>

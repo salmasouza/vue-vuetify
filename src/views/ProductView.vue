@@ -8,6 +8,7 @@
             cycle
             height="400px"
             class="carousel"
+            :show-arrows="true"
           >
             <v-carousel-item
               v-for="(image, index) in slides"
@@ -36,7 +37,7 @@
                   v-if="!finish && product.vendido === 'false'"
                   @click="handleComprar"
                   class="btn-buy primary-btn"
-                  outlined
+                  
                 >
                   Comprar
                 </v-btn>

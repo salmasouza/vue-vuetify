@@ -1,4 +1,5 @@
 <template>
+  <v-app>
   <div id="app">
     <TheHeader />
     <main id="main">
@@ -8,11 +9,12 @@
     </main>
     <TheFooter />
   </div>
+</v-app>
 </template>
 
 <script>
-import TheHeader from './components/TheHeader.vue'
-import TheFooter from './components/TheFooter.vue'
+import TheHeader from './components/TheHeader.vue';
+import TheFooter from './components/TheFooter.vue';
 
 export default {
   name: 'App',
@@ -24,7 +26,7 @@ export default {
 </script>
 
 <style>
-/* Remover estilos específicos para usar Vuetify */
+
 #app {
   display: flex;
   flex-direction: column;

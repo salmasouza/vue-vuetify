@@ -5,26 +5,38 @@ const axiosInstance = axios.create({
 });
 
 export const api = {
-  get (endpoint) {
+  get(endpoint) {
     return axiosInstance.get(endpoint);
   },
-  post (endpoint, body) {
+  post(endpoint, body) {
     return axiosInstance.post(endpoint, body);
   },
-  put (endpoint, body) {
+  put(endpoint, body) {
     return axiosInstance.put(endpoint, body);
   },
-  delete (endpoint) {
+  delete(endpoint) {
     return axiosInstance.delete(endpoint);
   },
-  getCartByUserId (userId) {
+  getCartByUserId(userId) {
     return axiosInstance.get(`/carrinho?usuario_id=${userId}`);
+  },
+
+  // Usuários
+  getUserById(userId) {
+    return axiosInstance.get(`/usuario/${userId}`);
+  },
+  createUser(userData) {
+    return axiosInstance.post('/usuario', userData);
+  },
+ 
+  deleteUser(userId) {
+    return axiosInstance.delete(`/usuario/${userId}`);
+  },
+  loginUser(email, senha) {
+    return axiosInstance.post('/login', { email, senha });
   }
 };
-
 
 export function getCep(cep) {
   return axios.get(`https://viacep.com.br/ws/${cep}/json/`);
 }
-
-

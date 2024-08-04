@@ -32,13 +32,15 @@
   </header>
 </template>
 
+
 <script>
 export default {
   name: 'TheHeader',
   computed: {
     getName() {
-      return this.$store.state.usuario.nome.replace(/ .*/, '')
-    },
+     
+      return this.$store.state.usuario.nome.split(' ')[0];
+    }
   },
   methods: {
     checkAuthBeforeRedirect() {
@@ -50,6 +52,7 @@ export default {
   }
 }
 </script>
+
 
 <style scoped>
 nav {
@@ -90,3 +93,4 @@ nav {
   color: white !important;
 }
 </style>
+

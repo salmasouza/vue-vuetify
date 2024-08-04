@@ -50,34 +50,62 @@ export default new Vuex.Store({
     }
   },
   actions: {
-    getUserProducts({ commit, state }) {
-      return api.get(`/produto?usuario_id=${state.usuario.id}`)
-        .then(res => {
-          if (res.status === 200) {
-            commit('UPDATE_USER_PRODUCTS', res.data);
-          }
-        });
+    async getUserProducts({ commit, state }) {
+      try {
+        const res = await api.get(`/produto?usuario_id=${state.usuario.id}`);
+        if (res.status === 200) {
+          commit('UPDATE_USER_PRODUCTS', res.data);
+        }
+      } catch (error) {
+        console.error('Erro ao buscar produtos do usuário:', error);
+      }
     },
-    getUser({ commit }, payload) {
-      return api.get(`/usuario/${payload}`)
+    getUser({ commit }, email) {
+      return api.get(`/usuario/${email}`)
         .then(res => {
           if (res.status === 200) {
             commit('UPDATE_USER', res.data);
             commit('UPDATE_LOGIN', true);
-          }
-        });
-    },
-    createUser({ commit }, payload) {
-      commit('UPDATE_USER', { id: payload.email });
-      return api.post('/usuario', payload)
-        .then(res => {
-          if (res.status === 201) {
-            alert('Cadastrado com sucesso!');
           } else {
-            alert('Ocorreu um erro. Tente novamente mais tarde.');
+            console.error(`Erro ao buscar usuário: ${res.status}`);
           }
+        })
+        .catch(error => {
+          console.error('Erro ao buscar usuário:', error);
         });
     },
+    async createUser({ commit }, payload) {
+      try {
+        const res = await api.createUser(payload);
+        if (res.status === 201) {
+          console.log('Usuário criado com sucesso:', res.data);
+          commit('UPDATE_USER', { id: payload.email });
+          return res.data;
+        }
+      } catch (error) {
+        const errorMsg = error.response ? error.response.data : error.message;
+        console.error('Erro ao criar usuário:', errorMsg);
+        throw new Error(`Erro ao criar usuário: ${errorMsg}`);
+      }
+    },
+    async login({ commit, dispatch }, { email, senha }) {
+      try {
+        const res = await api.loginUser(email, senha);
+        if (res.status === 200) {
+          commit('UPDATE_USER', res.data);
+          commit('UPDATE_LOGIN', true);
+  
+          // Fetch and update user data after successful login
+          await dispatch('getUser', res.data.email);
+          
+          return res.data;
+        }
+      } catch (error) {
+        console.error('Erro ao fazer login:', error);
+        throw new Error('Falha ao fazer login');
+      }
+    },
+    
     logout({ commit }) {
       commit('UPDATE_USER', {
         id: '',
@@ -93,33 +121,35 @@ export default new Vuex.Store({
       });
       commit('UPDATE_LOGIN', false);
     },
-    addToCart({ commit, state }, product) {
-      const cartItem = {
-        id: Date.now(),
-        produto: product,
-        usuario_id: state.usuario.id
-      };
-
-      return api.post('/carrinho', cartItem).then(response => {
+    async addToCart({ commit, state }, product) {
+      try {
+        const cartItem = {
+          id: Date.now(),
+          produto: product,
+          usuario_id: state.usuario.id
+        };
+        const response = await api.post('/carrinho', cartItem);
         commit('ADD_TO_CART', cartItem);
         return response.data;
-      }).catch(error => {
+      } catch (error) {
         console.error('Erro ao adicionar produto ao carrinho:', error);
-      });
+      }
     },
-    fetchCart({ commit }) {
-      return api.get('/carrinho').then(response => {
+    async fetchCart({ commit }) {
+      try {
+        const response = await api.get('/carrinho');
         commit('SET_CART', response.data);
-      }).catch(error => {
+      } catch (error) {
         console.error('Erro ao buscar carrinho:', error);
-      });
+      }
     },
-    removeFromCart({ commit }, productId) {
-      return api.delete(`/carrinho/${productId}`).then(() => {
+    async removeFromCart({ commit }, productId) {
+      try {
+        await api.delete(`/carrinho/${productId}`);
         commit('REMOVE_FROM_CART', productId);
-      }).catch(error => {
+      } catch (error) {
         console.error('Erro ao remover produto do carrinho:', error);
-      });
+      }
     }
   }
 });

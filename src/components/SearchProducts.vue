@@ -4,7 +4,8 @@
       v-model="search"
       label="Buscar..."
       class="search-input"
-      outlined
+      color="secondary"
+     
       dense
       :append-icon="'mdi-magnify'"
       @click:append="searchProducts"

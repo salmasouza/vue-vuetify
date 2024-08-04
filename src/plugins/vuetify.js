@@ -17,7 +17,8 @@ const vuetify = new Vuetify({
         success: '#4CAF50',
         warning: '#FB8C00',
         primary2: '#003366', // Azul-marinho
-        secondary: '#002244'
+        secondary: '#002244',
+        red:'#B71C1C',
       },
     },
   },

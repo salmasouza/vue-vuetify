@@ -6,8 +6,8 @@
           <v-text-field
             v-model="product.nome"
             label="Nome"
-            outlined
             dense
+            color="secondary"
           ></v-text-field>
         </v-col>
         <v-col cols="12" md="6">
@@ -15,21 +15,20 @@
             v-model="product.preco"
             label="Preço"
             type="number"
-            outlined
             dense
+            color="secondary"
           ></v-text-field>
         </v-col>
       </v-row>
 
       <v-row>
-        <v-col cols="12">
+        <v-col cols="12" md="6">
           <v-file-input
-            v-model="product.fotos"
+            v-model="files"
             label="Fotos"
             multiple
-            @change="handleFileUpload"
-            outlined
             dense
+            color="secondary"
           ></v-file-input>
         </v-col>
       </v-row>
@@ -39,8 +38,8 @@
           <v-textarea
             v-model="product.descricao"
             label="Descrição"
-            outlined
             dense
+            color="secondary"
           ></v-textarea>
         </v-col>
       </v-row>
@@ -49,14 +48,16 @@
         <v-col cols="12">
           <v-btn
             type="submit"
-            color="primary"
+            color="secondary"
             class="mr-2"
+            style="background-color: #002244; color: white;"
           >
             Adicionar Produto
           </v-btn>
           <v-btn
             @click.prevent="limpar"
             color="secondary"
+            style="background-color: #002244; color: white;"
           >
             Limpar Produto
           </v-btn>
@@ -79,21 +80,28 @@ export default {
         descricao: "",
         vendido: "false",
         fotos: []
-      }
+      },
+      files: [] // Novo campo para armazenar os arquivos selecionados
     };
+  },
+  watch: {
+    files: "handleFileUpload"
   },
   methods: {
     productFormat() {
       this.product.usuario_id = this.$store.state.usuario.id;
     },
-    handleFileUpload(event) {
-      const files = event.target.files;
-      for (let i = 0; i < files.length; i++) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          this.product.fotos.push(e.target.result);
-        };
-        reader.readAsDataURL(files[i]);
+    handleFileUpload() {
+      this.product.fotos = [];
+      if (this.files && this.files.length) {
+        Array.from(this.files).forEach(file => {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            console.log("File content:", e.target.result); // Log para depuração
+            this.product.fotos.push(e.target.result);
+          };
+          reader.readAsDataURL(file);
+        });
       }
     },
     async addProduct() {
@@ -102,6 +110,7 @@ export default {
       try {
         await api.post("/produto", this.product);
         await this.$store.dispatch('getUserProducts');
+        this.limpar(); // Limpar o formulário após adicionar o produto
       } catch (error) {
         console.error("Error adding product:", error);
       }
@@ -114,6 +123,7 @@ export default {
         vendido: "false",
         fotos: []
       };
+      this.files = []; // Limpar os arquivos selecionados
     }
   }
 };

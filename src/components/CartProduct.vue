@@ -1,9 +1,10 @@
 <template>
+  
   <div class="cart-container">
     <div class="header">
       <h2 class="cart-title">Seu Carrinho de Compras</h2>
     </div>
-   
+
     <template v-if="cartItems.length > 0">
       <div class="cards-wrapper">
         <v-card v-for="item in cartItems" :key="item.id" class="cart-card">
@@ -23,25 +24,57 @@
             <p class="description">{{ item.produto.descricao }}</p>
           </v-card-text>
           <v-card-actions>
-            <v-btn icon @click="removeFromCart(item.id)" class="remove-btn">
-              <v-icon>mdi-delete</v-icon>
+            <v-btn icon @click="openDialog(item.id)" class="remove-btn">
+              <v-icon class="delete-icon">mdi-delete</v-icon>
             </v-btn>
           </v-card-actions>
         </v-card>
       </div>
     </template>
     <p v-else class="empty-message">Seu carrinho está vazio.</p>
+
+
+    <v-dialog v-model="dialog.visible" max-width="500px">
+      <v-card>
+        <v-card-title class="headline">Confirmar Remoção</v-card-title>
+        <v-card-text>
+          Você tem certeza que deseja remover este item do carrinho?
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="secondary" @click="confirmRemove">Sim</v-btn>
+          <v-btn text @click="dialog.visible = false">Não</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
 <script>
 import { api } from '@/services.js';
+import { VDialog, VCard, VCardTitle, VCardText, VCardActions, VBtn, VIcon, VImg, VCardSubtitle, VSpacer } from 'vuetify/lib';
 
 export default {
   name: "CartProduct",
+  components: {
+    VDialog,
+    VCard,
+    VCardTitle,
+    VCardText,
+    VCardActions,
+    VBtn,
+    VIcon,
+    VImg,
+    VCardSubtitle,
+    VSpacer
+  },
   data() {
     return {
       cartItems: [],
+      dialog: {
+        visible: false,
+        itemId: null
+      }
     }
   },
   created() {
@@ -56,9 +89,21 @@ export default {
         console.error('Erro ao buscar carrinho:', error);
       });
     },
+    openDialog(itemId) {
+      console.log("teste")
+      this.dialog.visible = true;
+      this.dialog.itemId = itemId;
+    },
+    confirmRemove() {
+      if (this.dialog.itemId !== null) {
+        this.removeFromCart(this.dialog.itemId);
+        this.dialog.visible = false;
+      }
+    },
     removeFromCart(itemId) {
+      console.log("teste")
       this.$store.dispatch('removeFromCart', itemId).then(() => {
-        this.fetchCartItems(); 
+        this.fetchCartItems();
       }).catch(error => {
         console.error('Erro ao remover produto do carrinho:', error);
       });
@@ -144,7 +189,11 @@ export default {
   color: #666;
 }
 
-h2{
-  color:#002244 !important;
+h2 {
+  color: #002244 !important;
+}
+
+.delete-icon {
+  color: #002244 !important;
 }
 </style>

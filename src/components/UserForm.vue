@@ -4,27 +4,28 @@
       <v-text-field
         v-model="nome"
         label="Nome"
-        outlined
         dense
         class="custom-text-field"
+        color="secondary"
       ></v-text-field>
 
       <v-text-field
         v-model="email"
         label="E-mail"
         type="email"
-        outlined
         dense
         class="custom-text-field"
+        color="secondary"
       ></v-text-field>
 
       <v-text-field
         v-model="senha"
         label="Senha"
         type="password"
-        outlined
         dense
         class="custom-text-field"
+         color="secondary"
+         
       ></v-text-field>
     </div>
 
@@ -32,51 +33,51 @@
       v-model="cep"
       label="CEP"
       @keyup="fillCep"
-      outlined
       dense
       class="custom-text-field"
+       color="secondary"
     ></v-text-field>
 
     <div class="address-group">
       <v-text-field
         v-model="rua"
         label="Rua"
-        outlined
         dense
         class="address-field"
+         color="secondary"
       ></v-text-field>
 
       <v-text-field
         v-model="numero"
         label="Número"
-        outlined
         dense
         class="address-field"
+         color="secondary"
       ></v-text-field>
     </div>
 
     <v-text-field
       v-model="bairro"
       label="Bairro"
-      outlined
       dense
       class="custom-text-field"
+       color="secondary"
     ></v-text-field>
 
     <v-text-field
       v-model="cidade"
       label="Cidade"
-      outlined
       dense
       class="custom-text-field"
+       color="secondary"
     ></v-text-field>
 
     <v-text-field
       v-model="estado"
       label="Estado"
-      outlined
       dense
       class="custom-text-field"
+       color="secondary"
     ></v-text-field>
 
     <div class="button">
@@ -102,13 +103,13 @@ export default {
         "numero",
         "bairro",
         "cidade",
-        "estado",
+        "estado"
       ],
       base: "usuario",
-      mutation: "UPDATE_USER",
+      mutation: "UPDATE_USER"
     }),
-    showLoginLabels () {
-      return (!this.$store.state.login || this.$route.name === 'usuario-editar')
+    showLoginLabels() {
+      return (!this.$store.state.login || this.$route.name === 'usuario-editar');
     }
   },
   methods: {
@@ -122,23 +123,20 @@ export default {
             this.bairro = res.data.bairro;
             this.cidade = res.data.localidade;
             this.estado = res.data.uf;
-
-            this.$nextTick(() => {
-              console.log("DOM atualizada com:", this.rua, this.bairro, this.cidade, this.estado);
-            });
           })
           .catch((error) => {
             console.error("Erro ao buscar CEP:", error);
           });
       }
     }
-  },
-};
+  }
+}
 </script>
 
 <style scoped>
 .custom-text-field {
   margin-bottom: 20px; 
+  color:#002244 !important;
 }
 
 .address-group {
@@ -148,5 +146,9 @@ export default {
 
 .address-field {
   flex: 1;
+}
+
+.v-text-field{
+  color:#002244 !important;
 }
 </style>
