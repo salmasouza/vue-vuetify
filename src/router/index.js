@@ -8,7 +8,6 @@ import UserProducts from '@/views/user/UserProducts.vue';
 import UserEdit from '@/views/user/UserEdit.vue';
 import UserPurchases from '@/views/user/UserPurchases.vue';
 import UserSales from '@/views/user/UserSales.vue';
-//import CarrinhoProduto from '@/components/CarrinhoProduto.vue';
 import CartProduct from '@/components/CartProduct.vue';
 
 

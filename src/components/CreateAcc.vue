@@ -1,10 +1,19 @@
 <template>
-  <section>
-    <h1>Crie sua conta</h1>
-    <UserForm>
-      <button class="btn btn-form" @click.prevent="createUser">Criar Usuário</button>
-    </UserForm>
-  </section>
+  <v-container class="container" fluid>
+    <v-row justify="center" align="center">
+      <v-col cols="auto">
+        <h1>Crie sua conta</h1>
+        <UserForm>
+          <v-btn
+            class="btn-form custom-btn"
+            @click.prevent="createUser"
+          >
+            Criar Usuário
+          </v-btn>
+        </UserForm>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
@@ -24,20 +33,24 @@ export default {
 </script>
 
 <style scoped>
+.container {
+  min-height: 100vh; 
+  padding: 0 16px; 
+}
+
 h1 {
-  color: #87f;
+  color: #002244;
   font-size: 2rem;
-  margin: 40px 0 20px;
+  margin-bottom: 20px;
   text-align: center;
 }
 
-.btn {
-  margin: 0 auto;
-  max-width: 300px;
-  width: 100%;
+.btn-form {
+  margin-top: 20px; 
 }
 
-.btn-form {
-  max-width: 100%;
+.custom-btn {
+  background-color: #002244 !important; 
+  color: white !important;
 }
 </style>

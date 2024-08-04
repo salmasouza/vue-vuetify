@@ -3,18 +3,53 @@
     <div v-if="createIsOpen === false">
       <h1>Login</h1>
       <form @submit.prevent="logar">
-        <label for="email">Email</label>
-        <input type="email" name="email" id="email" v-model="login.email" @blur="checkEmail">
+        <v-text-field
+          v-model="login.email"
+          label="Email"
+          type="email"
+          :class="{ 'invalid': emailError }"
+          @blur="checkEmail"
+          outlined
+          dense
+        ></v-text-field>
         <p v-if="emailError" class="error">{{ emailError }}</p>
-        <label for="password">Senha</label>
-        <input type="password" name="password" id="password" v-model="login.password">
-        <button class="btn" type="submit">Entrar</button>
+        
+        <v-text-field
+          v-model="login.password"
+          label="Senha"
+          type="password"
+          outlined
+          dense
+        ></v-text-field>
+        
+        <v-btn
+          class="btn-secondary"
+          type="submit"
+          large
+        >
+          <span class="btn-text">Entrar</span>
+        </v-btn>
       </form>
       <p class="forgot-password">
         Esqueceu a senha?
-        <a href="/">Clique aqui.</a>
+        <v-btn
+          text
+          color="primary"
+          @click="$router.push('/')"
+          class="forgot-link"
+        >
+          Clique aqui.
+        </v-btn>
       </p>
-      <p class="create-acc" @click="createIsOpen = true">Criar conta</p>
+      <p class="create-acc">
+        <v-btn
+          text
+          color="primary"
+          @click="createIsOpen = true"
+        >
+          Criar conta
+        </v-btn>
+      </p>
     </div>
     <div v-else>
       <CreateAcc />
@@ -41,7 +76,7 @@ export default {
   methods: {
     logar() {
       if (this.emailError) {
-        alert('Por favor, corrija os erros antes de enviar.');
+        this.$toast.error('Por favor, corrija os erros antes de enviar.'); 
         return;
       }
 
@@ -70,20 +105,20 @@ export default {
 }
 
 h1 {
-  color: #87f;
+  color: #002244;
   font-size: 2rem;
   margin: 40px 0 20px;
   text-align: center;
 }
 
 form {
-  display: grid;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
-.btn {
-  margin: 0 auto;
-  max-width: 300px;
-  width: 100%;
+.invalid {
+  border-color: red;
 }
 
 .forgot-password {
@@ -97,21 +132,26 @@ form {
   text-align: center;
 }
 
-.forgot-password a,
-.create-acc {
-  color: #87f;
-  cursor: pointer;
-  font-weight: bold;
-}
-
-.forgot-password a:hover,
-.create-acc:hover {
-  text-decoration: underline;
-}
-
 .error {
   color: red;
   font-size: 0.875rem;
   margin-top: 5px;
+}
+
+.btn-secondary {
+  background-color: #002244 !important; 
+}
+
+.btn-text {
+  color: white;
+}
+
+.forgot-link {
+  color: #002244;
+  text-decoration: underline;
+}
+
+.forgot-link:hover {
+  text-decoration: underline;
 }
 </style>

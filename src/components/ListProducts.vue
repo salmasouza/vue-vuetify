@@ -13,14 +13,14 @@
             </div>
           </v-card-title>
           <v-card-subtitle class="price">{{ product.preco | numberPrice }}</v-card-subtitle>
-          <v-card-text>
+          <v-card-text color="primary">
             <p class="description">{{ product.descricao }}</p>
             <div class="rating">
-              <v-icon>mdi-star</v-icon>
-              <v-icon>mdi-star</v-icon>
-              <v-icon>mdi-star</v-icon>
-              <v-icon>mdi-star</v-icon>
-              <v-icon>mdi-star-outline</v-icon>
+              <v-icon color="yellow">mdi-star</v-icon>
+              <v-icon color="yellow">mdi-star</v-icon>
+              <v-icon color="yellow">mdi-star</v-icon>
+              <v-icon color="yellow">mdi-star</v-icon>
+              <v-icon color="yellow">mdi-star-outline</v-icon>
             </div>
           </v-card-text>
           <v-btn icon @click.stop="handleAddToCart(product)" class="cart-btn">
@@ -103,8 +103,8 @@ export default {
       });
     },
     redirectToProductPage(product) {
-    this.$router.push(`/produto/${product.id}`);
-  }
+      this.$router.push(`/produto/${product.id}`);
+    }
   },
   watch: {
     url() {
@@ -119,7 +119,6 @@ export default {
   },
 };
 </script>
-
 
 <style scoped>
 .container-products {
@@ -173,6 +172,7 @@ export default {
   display: flex;
   gap: 5px;
   margin-bottom: 10px;
+  
 }
 
 .favorite-btn,
@@ -212,4 +212,9 @@ export default {
   text-align: center;
   padding: 10px 0;
 }
+
+.rating .v-icon {
+  color: yellow; 
+}
+
 </style>

@@ -1,39 +1,83 @@
 <template>
   <form>
-    <div class="user" v-if="showLoginLabels">
-      <label for="name">Nome</label>
-      <input type="text" name="name" id="name" v-model="nome" />
+    <div v-if="showLoginLabels">
+      <v-text-field
+        v-model="nome"
+        label="Nome"
+        outlined
+        dense
+        class="custom-text-field"
+      ></v-text-field>
 
-      <label for="email">E-mail</label>
-      <input type="email" name="email" id="email" v-model="email" />
+      <v-text-field
+        v-model="email"
+        label="E-mail"
+        type="email"
+        outlined
+        dense
+        class="custom-text-field"
+      ></v-text-field>
 
-      <label for="password">Senha</label>
-      <input type="password" name="password" id="password" v-model="senha" />
+      <v-text-field
+        v-model="senha"
+        label="Senha"
+        type="password"
+        outlined
+        dense
+        class="custom-text-field"
+      ></v-text-field>
     </div>
 
-    <label for="cep">CEP</label>
-    <input type="text" name="cep" id="cep" v-model="cep" @keyup="fillCep" />
+    <v-text-field
+      v-model="cep"
+      label="CEP"
+      @keyup="fillCep"
+      outlined
+      dense
+      class="custom-text-field"
+    ></v-text-field>
 
     <div class="address-group">
-      <div class="address-field">
-        <label for="road">Rua</label>
-        <input type="text" name="road" id="road" v-model="rua" />
-      </div>
+      <v-text-field
+        v-model="rua"
+        label="Rua"
+        outlined
+        dense
+        class="address-field"
+      ></v-text-field>
 
-      <div class="address-field">
-        <label for="number">Número</label>
-        <input type="text" name="number" id="number" v-model="numero" />
-      </div>
+      <v-text-field
+        v-model="numero"
+        label="Número"
+        outlined
+        dense
+        class="address-field"
+      ></v-text-field>
     </div>
 
-    <label for="district">Bairro</label>
-    <input type="text" name="district" id="district" v-model="bairro" />
+    <v-text-field
+      v-model="bairro"
+      label="Bairro"
+      outlined
+      dense
+      class="custom-text-field"
+    ></v-text-field>
 
-    <label for="city">Cidade</label>
-    <input type="text" name="city" id="city" v-model="cidade" />
+    <v-text-field
+      v-model="cidade"
+      label="Cidade"
+      outlined
+      dense
+      class="custom-text-field"
+    ></v-text-field>
 
-    <label for="state">Estado</label>
-    <input type="text" name="state" id="state" v-model="estado" />
+    <v-text-field
+      v-model="estado"
+      label="Estado"
+      outlined
+      dense
+      class="custom-text-field"
+    ></v-text-field>
 
     <div class="button">
       <slot></slot>
@@ -69,39 +113,32 @@ export default {
   },
   methods: {
     fillCep() {
-  const cep = this.cep.replace(/\D/g, "");
+      const cep = this.cep.replace(/\D/g, "");
 
-  if (cep.length === 8) {
-    getCep(cep)
-      .then((res) => {
-        this.rua = res.data.logradouro;
-        this.bairro = res.data.bairro;
-        this.cidade = res.data.localidade;
-        this.estado = res.data.uf;
+      if (cep.length === 8) {
+        getCep(cep)
+          .then((res) => {
+            this.rua = res.data.logradouro;
+            this.bairro = res.data.bairro;
+            this.cidade = res.data.localidade;
+            this.estado = res.data.uf;
 
-        this.$nextTick(() => {
-          console.log("DOM atualizada com:", this.rua, this.bairro, this.cidade, this.estado);
-        });
-      })
-      .catch((error) => {
-        console.error("Erro ao buscar CEP:", error);
-      });
-  }
-}
-
-
-
-
-
+            this.$nextTick(() => {
+              console.log("DOM atualizada com:", this.rua, this.bairro, this.cidade, this.estado);
+            });
+          })
+          .catch((error) => {
+            console.error("Erro ao buscar CEP:", error);
+          });
+      }
+    }
   },
 };
 </script>
 
 <style scoped>
-form,
-.user {
-  display: flex;
-  flex-direction: column;
+.custom-text-field {
+  margin-bottom: 20px; 
 }
 
 .address-group {
@@ -112,32 +149,4 @@ form,
 .address-field {
   flex: 1;
 }
-
-.button {
-  margin-top: 10px;
-}
-label {
-  display: block; 
-  margin-bottom: 5px; 
-
-}
-
-input[type="text"],
-input[type="email"],
-input[type="password"] {
-  width: 100%;
-  padding: 10px;
-  margin-top: 3px; 
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  box-sizing: border-box;
-}
-
-input[type="text"]:focus,
-input[type="email"]:focus,
-input[type="password"]:focus {
-  border-color: #87f;
-  outline: none;
-}
-
 </style>

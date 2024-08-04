@@ -5,19 +5,28 @@
         <img src="@/assets/logo.jpg" alt="Deep Space Store">
       </router-link>
       <div class="nav-links">
-        <router-link
+        <v-btn
           to="/carrinho"
-          class="btn cart-icon"
+          class="nav-button primary-btn"
           @click.native="checkAuthBeforeRedirect"
+          icon
         >
           <v-icon>mdi-cart</v-icon>
-        </router-link>
-        <router-link to="/usuario" class="btn" v-if="$store.state.login">
+        </v-btn>
+        <v-btn
+          v-if="$store.state.login"
+          to="/usuario"
+          class="nav-button primary-btn"
+        >
           {{ getName }}
-        </router-link>
-        <router-link to="/login" class="btn" v-else>
+        </v-btn>
+        <v-btn
+          v-else
+          to="/login"
+          class="nav-button secondary-btn"
+        >
           Vender / Login
-        </router-link>
+        </v-btn>
       </div>
     </nav>
   </header>
@@ -29,7 +38,7 @@ export default {
   computed: {
     getName() {
       return this.$store.state.usuario.nome.replace(/ .*/, '')
-    }
+    },
   },
   methods: {
     checkAuthBeforeRedirect() {
@@ -45,7 +54,6 @@ export default {
 <style scoped>
 nav {
   align-items: center;
-  box-shadow: 0 2px 4px rgba(30, 60, 90, 0.1);
   display: flex;
   justify-content: space-between;
   padding: 15px 20px;
@@ -64,31 +72,21 @@ nav {
   align-items: center;
 }
 
-.btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 40px; 
-  padding: 0 15px;
-  text-decoration: none;
-  color: #000;
-  font-weight: bold;
-  border: 1px solid transparent; 
-  border-radius: 4px; 
-  transition: background-color 0.3s, color 0.3s;
-  margin-left: 10px; 
+.nav-button {
+  margin-left: 10px;
+  border-radius: 4px;
 }
 
-.btn:first-of-type {
+.nav-button:first-of-type {
   margin-left: 0;
 }
 
-.cart-icon {
-  width: 40px; 
-  height: 40px; 
+.primary-btn {
+  background-color: #063564 !important; 
+  color: white !important;
 }
-
-.cart-icon v-icon {
-  font-size: 24px;
+.secondary-btn {
+  background-color: #002244 !important; 
+  color: white !important;
 }
 </style>
