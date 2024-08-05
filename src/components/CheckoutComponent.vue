@@ -57,8 +57,8 @@
             <v-text-field v-if="paymentMethod === 'cartao'" v-model="payment.nomeCartao" label="Nome no Cartão"
               type="text" dense class="custom-text-field" required color="secondary"></v-text-field>
 
-            <v-text-field  name="cpf" v-model="payment.cpf" label="CPF" type="text" @input="validateCPF" v-mask="'###.###.###-##'"
-              placeholder="###.###.###-##" dense class="custom-text-field"
+            <v-text-field name="cpf" v-model="payment.cpf" label="CPF" type="text" @input="validateCPF"
+              v-mask="'###.###.###-##'" placeholder="###.###.###-##" dense class="custom-text-field"
               :class="{ invalid: !validCpf && payment.cpf.length > 0 }" required color="secondary"></v-text-field>
             <span v-if="!validCpf && payment.cpf.length > 0" class="error-message">CPF inválido</span>
           </div>
@@ -255,11 +255,16 @@ export default {
     },
 
     formatPrice(price) {
+      const numberPrice = parseFloat(price);
+      if (isNaN(numberPrice)) {
+        return 'R$ 0,00';
+      }
       return new Intl.NumberFormat('pt-BR', {
         style: 'currency',
         currency: 'BRL'
-      }).format(price);
+      }).format(numberPrice);
     },
+
 
     formatCardNumber() {
       this.payment.numeroCartao = this.payment.numeroCartao.replace(/\D/g, '');
