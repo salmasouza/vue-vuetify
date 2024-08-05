@@ -41,8 +41,9 @@
             <v-radio color="secondary" label="Boleto" value="boleto"></v-radio>
           </v-radio-group>
 
-          <div v-if="paymentMethod === 'cartao'">
+          <div>
             <v-text-field
+              v-if="paymentMethod === 'cartao'"
               color="secondary"
               v-model="payment.numeroCartao"
               label="Número do Cartão"
@@ -56,6 +57,7 @@
 
             <div class="payment-details">
               <v-text-field
+                v-if="paymentMethod === 'cartao'"
                 v-model="payment.prazo"
                 label="Prazo"
                 type="text"
@@ -66,6 +68,7 @@
               ></v-text-field>
 
               <v-text-field
+                v-if="paymentMethod === 'cartao'"
                 v-model="payment.cvc"
                 label="CVC"
                 type="text"
@@ -77,6 +80,7 @@
             </div>
 
             <v-text-field
+              v-if="paymentMethod === 'cartao'"
               v-model="payment.nomeCartao"
               label="Nome no Cartão"
               type="text"
@@ -85,25 +89,32 @@
               required
               color="secondary"
             ></v-text-field>
+
+            <v-text-field
+              v-model="payment.cpf"
+              label="CPF"
+              type="text"
+              @input="validateCPF"
+              v-mask="'###.###.###-##'"
+              placeholder="###.###.###-##"
+              dense
+              class="custom-text-field"
+              :class="{ invalid: !validCpf && payment.cpf.length > 0 }"
+              required
+              color="secondary"
+            ></v-text-field>
+            <span v-if="!validCpf && payment.cpf.length > 0" class="error-message">CPF inválido</span>
           </div>
 
-          <v-text-field
-            v-model="payment.cpf"
-            label="CPF"
-            type="text"
-            @input="validateCPF"
-            v-mask="'###.###.###-##'"
-            placeholder="###.###.###-##"
-            dense
-            class="custom-text-field"
-            :class="{ invalid: !validCpf && payment.cpf.length > 0 }"
-            required
-            color="secondary"
-          ></v-text-field>
-          <span v-if="!validCpf && payment.cpf.length > 0" class="error-message">CPF inválido</span>
-
           <div class="buttons-container">
-            <v-btn color="secondary" class="btn-custom" type="submit" v-if="$store.state.login">
+
+            <div v-if="paymentMethod === 'pix' || paymentMethod === 'boleto'">
+            <v-btn color="secondary" class="btn-custom" @click="generatePaymentData">
+              Gerar dados de pagamento
+            </v-btn>
+          </div>
+
+            <v-btn color="secondary" class="btn-custom" type="submit" v-if="paymentMethod === 'cartao' && $store.state.login">
               Finalizar Compra
             </v-btn>
 
@@ -116,7 +127,6 @@
     </v-stepper-items>
   </v-stepper>
 </template>
-
 
 <script>
 import { mapState } from 'vuex';
@@ -178,30 +188,30 @@ export default {
     },
 
     async createUser() {
-    try {
-      // Obtenha apenas os campos necessários do estado
-      const { nome, email, senha, cep, rua, numero, bairro, cidade, estado } = this.$store.state.usuario;
+      try {
+       
+        const { nome, email, senha, cep, rua, numero, bairro, cidade, estado } = this.$store.state.usuario;
 
-      // Prepare o objeto do usuário com os campos desejados
-      const userPayload = {
-        nome,
-        email,
-        senha,
-        cep,
-        rua,
-        numero,
-        bairro,
-        cidade,
-        estado
-      };
+       
+        const userPayload = {
+          nome,
+          email,
+          senha,
+          cep,
+          rua,
+          numero,
+          bairro,
+          cidade,
+          estado
+        };
 
-      await this.$store.dispatch('createUser', userPayload);
-      await this.$store.dispatch('getUser', email);
-      await this.$router.push({ name: 'usuario' });
-    } catch (error) {
-      console.error('Erro ao criar usuário:', error);
-    }
-  },
+        await this.$store.dispatch('createUser', userPayload);
+        await this.$store.dispatch('getUser', email);
+        await this.$router.push({ name: 'usuario' });
+      } catch (error) {
+        console.error('Erro ao criar usuário:', error);
+      }
+    },
 
     validateCPF() {
       const cpf = this.payment.cpf.replace(/\D/g, '');
@@ -257,11 +267,15 @@ export default {
       } else {
         this.payment.numeroCartao = cleaned;
       }
+    },
+
+    generatePaymentData() {
+
+      alert('Dados de pagamento gerados!');
     }
   }
 }
 </script>
-
 
 <style scoped>
 .user-form-section,
@@ -276,7 +290,7 @@ h2 {
 
 .custom-text-field {
   margin-bottom: 20px;
-  color:#002244;
+  color: #002244;
 }
 
 .payment-details {
@@ -305,24 +319,10 @@ h2 {
   text-decoration: none;
   display: inline-block;
   font-size: 16px;
-  margin: 4px 2px;
   cursor: pointer;
-  border-radius: 4px;
-  transition-duration: 0.4s;
-}
-
-.btn-custom:hover {
-  background-color: #002244;
-  color: white;
-}
-
-.invalid {
-  border-color: red;
 }
 
 .error-message {
   color: red;
-  font-size: 12px;
-  margin-top: 3px;
 }
 </style>
