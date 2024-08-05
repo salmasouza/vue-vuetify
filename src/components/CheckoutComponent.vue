@@ -35,7 +35,7 @@
       <v-stepper-content step="2">
         <h2>Pagamento</h2>
         <form class="payment" @submit.prevent="finishCheckout">
-          <v-radio-group color="secondary" v-model="paymentMethod" mandatory>
+          <v-radio-group color="secondary" v-model="paymentMethod" mandatory class="ml-3">
             <v-radio color="secondary" label="Cartão de Crédito" value="cartao"></v-radio>
             <v-radio color="secondary" label="PIX" value="pix"></v-radio>
             <v-radio color="secondary" label="Boleto" value="boleto"></v-radio>
@@ -107,12 +107,17 @@
           </div>
 
           <div class="buttons-container">
+            <div v-if="paymentMethod === 'pix'">
+              <v-btn color="secondary" class="btn-custom" @click="generatePaymentData">
+                Gerar dados de pagamento
+              </v-btn>
+            </div>
 
-            <div v-if="paymentMethod === 'pix' || paymentMethod === 'boleto'">
-            <v-btn color="secondary" class="btn-custom" @click="generatePaymentData">
-              Gerar dados de pagamento
-            </v-btn>
-          </div>
+            <div v-if="paymentMethod === 'boleto'">
+              <v-btn color="secondary" class="btn-custom" @click="generatePaymentBoleto">
+                Gerar código de barras
+              </v-btn>
+            </div>
 
             <v-btn color="secondary" class="btn-custom" type="submit" v-if="paymentMethod === 'cartao' && $store.state.login">
               Finalizar Compra
@@ -125,6 +130,24 @@
         </form>
       </v-stepper-content>
     </v-stepper-items>
+
+    <v-dialog v-model="dialog" max-width="600">
+      <v-card>
+        <v-card-title class="headline">{{ isQRCode ? 'QR Code' : 'Código de Barras' }}</v-card-title>
+        <v-card-text>
+          <div class="qr-code-container" v-if="isQRCode">
+            <canvas ref="qrcode"></canvas>
+          </div>
+          <div class="barcode-container" v-if="!isQRCode">
+            <canvas ref="barcode"></canvas>
+          </div>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="secondary" @click="dialog = false">Fechar</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-stepper>
 </template>
 
@@ -132,6 +155,8 @@
 import { mapState } from 'vuex';
 import UserForm from '@/components/UserForm';
 import { api } from '@/services.js';
+import QRious from 'qrious';
+import BWIPJS from 'bwip-js';
 
 export default {
   name: 'CheckoutComponent',
@@ -142,6 +167,8 @@ export default {
       step: 1,
       paymentMethod: 'cartao',
       validCpf: true,
+      dialog: false,
+      isQRCode: true,
       payment: {
         numeroCartao: "",
         prazo: "",
@@ -189,10 +216,7 @@ export default {
 
     async createUser() {
       try {
-       
         const { nome, email, senha, cep, rua, numero, bairro, cidade, estado } = this.$store.state.usuario;
-
-       
         const userPayload = {
           nome,
           email,
@@ -204,7 +228,6 @@ export default {
           cidade,
           estado
         };
-
         await this.$store.dispatch('createUser', userPayload);
         await this.$store.dispatch('getUser', email);
         await this.$router.push({ name: 'usuario' });
@@ -260,24 +283,48 @@ export default {
     },
 
     formatCardNumber() {
-      const cleaned = this.payment.numeroCartao.replace(/\D/g, '');
-      const match = cleaned.match(/.{1,4}/g);
-      if (match) {
-        this.payment.numeroCartao = match.join(' ');
-      } else {
-        this.payment.numeroCartao = cleaned;
-      }
+      this.payment.numeroCartao = this.payment.numeroCartao.replace(/\D/g, '');
+      this.payment.numeroCartao = this.payment.numeroCartao.replace(/(\d{4})(\d{4})(\d{4})(\d{4})/, '$1 $2 $3 $4');
     },
 
-    generatePaymentData() {
+    async generatePaymentData() {
+      this.isQRCode = true;
+      this.dialog = true;
 
-      alert('Dados de pagamento gerados!');
+      const qr = new QRious({
+        value: 'Exemplo de QR Code', 
+        size: 250
+      });
+
+      this.$nextTick(() => {
+        const canvas = this.$refs.qrcode;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(qr.canvas, 0, 0);
+      });
+    },
+
+    async generatePaymentBoleto() {
+      this.isQRCode = false;
+      this.dialog = true;
+
+      const barcodeData = '12345678901234567890'; 
+      BWIPJS.toCanvas(this.$refs.barcode, {
+        bcid: 'code39',
+        text: barcodeData,
+        scale: 3,
+        height: 10,
+        includetext: true
+      }, (err) => {
+        if (err) {
+          console.error(err);
+        }
+      });
     }
   }
 }
 </script>
 
-<style scoped>
+<style>
 .user-form-section,
 .form-payment {
   display: flex;
@@ -324,5 +371,19 @@ h2 {
 
 .error-message {
   color: red;
+}
+.qr-code-container {
+  display: flex;
+  justify-content: center;
+}
+
+.qr-code-container,
+.barcode-container {
+  text-align: center;
+}
+
+.barcode-container {
+  display: flex;
+  justify-content: center;
 }
 </style>

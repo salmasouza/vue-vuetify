@@ -11,7 +11,7 @@
             <div class="title-container">
               <h2 class="name">{{ product.nome }}</h2>
               <v-btn icon @click.stop="toggleFavorite(product)" class="favorite-btn">
-                <v-icon :color="product.favorito ? 'secondary' : ''">{{ product.favorito ? 'mdi-heart' :
+                <v-icon color="red">{{ product.favorito ? 'red' :
                   'mdi-heart-outline' }}</v-icon>
               </v-btn>
 

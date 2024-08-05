@@ -4,8 +4,8 @@
       <img v-if="product.fotos && product.fotos.length" :src="product.fotos[0]" :alt="product.nome" />
       <p class="view-text">Ver produto</p>
     </router-link>
-    <div class="info">
-      <p class="price">{{ product.preco | numberPrice }}</p>
+    <div class="infos ml-9">
+      <p class="price mt-3">{{ product.preco | numberPrice }}</p>
       <h2 class="title">{{ product.nome }}</h2>
       <slot></slot>
     </div>
@@ -76,7 +76,7 @@ export default {
   font-weight: bold;
 }
 
-.info {
+.infos {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -96,8 +96,8 @@ export default {
   font-weight: bold;
 }
 
-.info p,
-.info h2 {
+.infos p,
+.infos h2 {
   margin-bottom: 10px;
 }
 </style>

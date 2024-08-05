@@ -7,15 +7,30 @@
       <li v-for="produto in usuario_produtos" :key="produto.id" class="product-item">
         <ProductItem :product="produto">
           <p>{{ produto.descricao }}</p>
-          <button class="remove-btn" @click="deleteProduct(produto.id)">
+          <button class="remove-btn" @click="openDialog(produto.id)">
             <v-icon color="red" class="delete">mdi-delete</v-icon>
           </button>
         </ProductItem>
         <hr class="solid" />
       </li>
     </transition-group>
+
+    <v-dialog v-model="dialog.visible" max-width="500px">
+      <v-card>
+        <v-card-title class="headline">Confirmar Remoção</v-card-title>
+        <v-card-text>
+          Você tem certeza que deseja remover este produto?
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="secondary" @click="confirmRemove">Sim</v-btn>
+          <v-btn text @click="dialog.visible = false">Não</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </section>
 </template>
+
 
 
 <script>
@@ -23,25 +38,42 @@ import { mapState, mapActions } from "vuex";
 import AddProduct from "@/components/AddProduct.vue";
 import ProductItem from "@/components/ProductItem.vue";
 
+import { api } from '@/services';
+
 export default {
   name: "UserProducts",
   components: { AddProduct, ProductItem },
+  data() {
+    return {
+      dialog: {
+        visible: false,
+        itemId: null
+      }
+    };
+  },
   computed: {
     ...mapState(["login", "usuario", "usuario_produtos"])
   },
   methods: {
     ...mapActions(["getUserProducts"]),
-    async deleteProduct(id) {
-      const confirm = window.confirm('Deseja remover este produto?');
-      if (confirm) {
-        try {
-          await this.$api.delete(`/produto/${id}`);
-          await this.getUserProducts();
-        } catch (error) {
-          console.error('Erro ao remover produto:', error);
-        }
-      }
+    openDialog(id) {
+      console.log('ID do produto recebido em openDialog:', id);
+      this.dialog.visible = true;
+      this.dialog.itemId = id;
+    },
+    async confirmRemove() {
+  console.log('ID do produto a ser removido:', this.dialog.itemId);
+  if (this.dialog.itemId !== null) {
+    try {
+      await api.delete(`/produto/${this.dialog.itemId}`);
+      await this.getUserProducts();
+    } catch (error) {
+      console.error('Erro ao remover produto:', error);
     }
+    this.dialog.visible = false; 
+  }
+}
+
   },
   watch: {
     login() {
@@ -57,6 +89,7 @@ export default {
   }
 }
 </script>
+
 
 <style scoped>
 h2 {
@@ -108,3 +141,4 @@ hr.solid {
   right: 10px;
 }
 </style>
+
