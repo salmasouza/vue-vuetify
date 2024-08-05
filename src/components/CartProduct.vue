@@ -17,7 +17,7 @@
             </v-btn>
           </div>
         </v-card-title>
-        <v-card-subtitle class="price">{{ item.produto.preco | numberPrice }}</v-card-subtitle>
+        <v-card-subtitle class="price">{{ formattedPrice(item.produto.preco) }}</v-card-subtitle>
         <v-card-text>
           <p class="description">{{ item.produto.descricao }}</p>
         </v-card-text>
@@ -113,6 +113,16 @@ export default {
       }).catch(error => {
         console.error('Erro ao remover produto do carrinho:', error);
       });
+    },
+
+    formattedPrice(value) {
+      let numberValue = parseFloat(value);
+      if (isNaN(numberValue) || numberValue < 0) {
+        numberValue = 0;
+      }
+      const formatted = `R$ ${numberValue.toFixed(2).replace('.', ',')}`;
+
+      return formatted;
     }
   },
   watch: {
@@ -183,7 +193,7 @@ export default {
 }
 
 .price {
-  color: #e80;
+  color: #e80 !important;
   font-weight: bold;
 }
 

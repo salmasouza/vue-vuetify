@@ -105,11 +105,11 @@
               </div>
             </v-col>
             <v-col cols="6">
+              <div class="barcode-container" v-if="!isQRCode">
+                <canvas ref="barcode" class="barcode-canvas"></canvas>
+              </div>
               <div class="qr-code-container" v-if="isQRCode">
                 <canvas ref="qrcode"></canvas>
-              </div>
-              <div class="barcode-container" v-if="!isQRCode">
-                <canvas ref="barcode"></canvas>
               </div>
             </v-col>
           </v-row>
@@ -299,7 +299,7 @@ export default {
       this.clearCanvas();
       this.$nextTick(() => {
         const qr = new QRious({
-          value: 'Exemplo de QR Code',
+          value: `Pagamento de ${this.formatPrice(this.produto.preco)}`,
           size: 150
         });
 
@@ -314,7 +314,11 @@ export default {
       this.dialog = true;
       this.clearCanvas();
       this.$nextTick(() => {
-        const barcodeData = '12345678901';
+        const sanitizedValue = this.produto.preco
+          .replace(/[^0-9.-]/g, '');
+
+        const barcodeData = `12345678901${sanitizedValue}`;
+
         BWIPJS.toCanvas(this.$refs.barcode, {
           bcid: 'code39',
           text: barcodeData,
@@ -381,19 +385,26 @@ h2 {
   color: red;
 }
 
-.qr-code-container {
-  display: flex;
-  justify-content: center;
-}
 
 .qr-code-container,
 .barcode-container {
   text-align: center;
 }
 
-.barcode-container {
+.barcode-container,
+.qr-code-container {
   display: flex;
   justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+.barcode-canvas {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
 }
 
 .float-left {

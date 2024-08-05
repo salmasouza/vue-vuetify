@@ -12,7 +12,7 @@
               <h2 class="name">{{ product.nome }}</h2>
               <v-btn icon @click.stop="toggleFavorite(product)" class="favorite-btn">
                 <v-icon color="red">{{ product.favorito ? 'red' :
-                  'mdi-heart-outline' }}</v-icon>
+        'mdi-heart-outline' }}</v-icon>
               </v-btn>
 
             </div>
@@ -166,7 +166,7 @@ export default {
 }
 
 .price {
-  color: #e80;
+  color: #e80 !important;
   font-weight: bold;
 }
 

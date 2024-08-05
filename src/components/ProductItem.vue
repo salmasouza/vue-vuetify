@@ -5,13 +5,12 @@
       <p class="view-text">Ver produto</p>
     </router-link>
     <div class="infos ml-9">
-      <p class="price mt-3">{{ product.preco | numberPrice }}</p>
+      <p class="price mt-3">{{ formattedPrice }}</p>
       <h2 class="title">{{ product.nome }}</h2>
       <slot></slot>
     </div>
   </div>
 </template>
-
 
 <script>
 export default {
@@ -22,14 +21,18 @@ export default {
       required: true
     }
   },
-  filters: {
-    numberPrice(value) {
-      return `R$ ${(value / 100).toFixed(2).replace('.', ',')}`;
+  computed: {
+    formattedPrice() {
+      let numberValue = parseFloat(this.product.preco);
+      if (isNaN(numberValue) || numberValue < 0) {
+        numberValue = 0;
+      }
+      const formatted = `R$ ${numberValue.toFixed(2).replace('.', ',')}`;
+      return formatted;
     }
   }
 };
 </script>
-
 
 
 <style scoped>
