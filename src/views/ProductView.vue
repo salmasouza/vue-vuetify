@@ -1,9 +1,9 @@
 <template>
-  <v-container fluid>
+  <v-container fluid class="p-2">
     <template v-if="product">
       <v-row>
         <v-col cols="12" md="4" lg="5">
-          <v-carousel cycle height="400px" class="carousel" :show-arrows="true">
+          <v-carousel cycle height="400px" class="carousel ml-3" :show-arrows="true">
             <v-carousel-item v-for="(image, index) in slides" :key="index">
               <v-sheet height="100%" color="transparent">
                 <div class="d-flex fill-height justify-center align-center">
@@ -15,7 +15,7 @@
         </v-col>
 
         <v-col cols="12" md="2" lg="2">
-          <div class="product-details">
+          <div class="product-details ml-4">
             <h1>{{ product.nome }}</h1>
             <p class="price">{{ formatPrice(product.preco) }}</p>
             <p class="description">{{ product.descricao }}</p>
@@ -30,7 +30,7 @@
         </v-col>
 
         <v-col cols="12" md="6" lg="5" v-if="finish">
-          <CheckoutComponent :produto="product" @generate-payment-data="generatePaymentData" />
+          <CheckoutComponent :produto="product" />
         </v-col>
       </v-row>
     </template>
@@ -39,24 +39,7 @@
       <LoadingComponent />
     </template>
 
-    
-    <v-dialog v-model="dialog" max-width="500px">
-      <v-card>
-        <v-card-title>
-          Dados de Pagamento
-        </v-card-title>
-        <v-card-subtitle>
-          QR Code:
-        </v-card-subtitle>
-        <v-card-text>
-          <canvas ref="qrCanvas"></canvas>
-        </v-card-text>
-        <v-card-actions>
-          <v-btn color="primary" @click="finalizePayment">Finalizar Pagamento</v-btn>
-          <v-btn color="secondary" @click="dialog = false">Fechar</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+
   </v-container>
 </template>
 
@@ -64,7 +47,7 @@
 import { api } from '@/services.js';
 import CheckoutComponent from '@/components/CheckoutComponent';
 import LoadingComponent from '@/components/LoadingComponent';
-import QRious from 'qrious'; // Importa a biblioteca QRious
+
 
 export default {
   name: "ProductView",
@@ -75,7 +58,6 @@ export default {
       product: null,
       finish: false,
       slides: [],
-      dialog: false, // Controle do diálogo
     };
   },
   methods: {
@@ -115,21 +97,6 @@ export default {
       }
     },
 
-    generatePaymentData() {
-      const qrCanvas = this.$refs.qrCanvas;
-      new QRious({
-        element: qrCanvas,
-        value: `Preço: ${this.product.preco}`, // Utiliza o preço real
-        size: 200
-      });
-      this.dialog = true; // Abre o diálogo com o QR Code
-    },
-
-    finalizePayment() {
-      // Lógica para finalizar o pagamento
-      this.dialog = false; // Fecha o diálogo
-    },
-
     formatPrice(price) {
       const numericPrice = parseFloat(price);
       if (isNaN(numericPrice)) {
@@ -155,6 +122,7 @@ export default {
   height: 100%;
   object-fit: contain;
   border-radius: 4px;
+  border: 3px solid #002244;
 }
 
 .price {

@@ -1,5 +1,5 @@
 <template>
-  <v-stepper v-model="step">
+  <v-stepper class="mr-8" v-model="step">
     <v-stepper-header>
       <v-stepper-step :complete="step > 1" color="secondary" step="1">
         <v-icon color="secondary">mdi-home-outline</v-icon>
@@ -23,7 +23,7 @@
           </div>
         </div>
 
-        <v-row justify="center">
+        <v-row justify="end">
           <v-col cols="auto">
             <v-btn color="secondary" class="btn-custom" @click="step = 2">
               Continuar
@@ -42,71 +42,31 @@
           </v-radio-group>
 
           <div>
-            <v-text-field
-              v-if="paymentMethod === 'cartao'"
-              color="secondary"
-              v-model="payment.numeroCartao"
-              label="Número do Cartão"
-              type="text"
-              dense
-              class="custom-text-field"
-              @input="formatCardNumber"
-              maxlength="19"
-              required
-            ></v-text-field>
+            <v-text-field v-if="paymentMethod === 'cartao'" color="secondary" v-model="payment.numeroCartao"
+              label="Número do Cartão" type="text" dense class="custom-text-field" @input="formatCardNumber"
+              maxlength="19" required></v-text-field>
 
             <div class="payment-details">
-              <v-text-field
-                v-if="paymentMethod === 'cartao'"
-                v-model="payment.prazo"
-                label="Prazo"
-                type="text"
-                dense
-                class="payment-group"
-                required
-                color="secondary"
-              ></v-text-field>
+              <v-text-field v-if="paymentMethod === 'cartao'" v-model="payment.prazo" label="Prazo" type="text" dense
+                class="payment-group" required color="secondary"></v-text-field>
 
-              <v-text-field
-                v-if="paymentMethod === 'cartao'"
-                v-model="payment.cvc"
-                label="CVC"
-                type="text"
-                dense
-                class="payment-group"
-                required
-                color="secondary"
-              ></v-text-field>
+              <v-text-field v-if="paymentMethod === 'cartao'" v-model="payment.cvc" label="CVC" type="text" dense
+                class="payment-group" required color="secondary"></v-text-field>
             </div>
 
-            <v-text-field
-              v-if="paymentMethod === 'cartao'"
-              v-model="payment.nomeCartao"
-              label="Nome no Cartão"
-              type="text"
-              dense
-              class="custom-text-field"
-              required
-              color="secondary"
-            ></v-text-field>
+            <v-text-field v-if="paymentMethod === 'cartao'" v-model="payment.nomeCartao" label="Nome no Cartão"
+              type="text" dense class="custom-text-field" required color="secondary"></v-text-field>
 
-            <v-text-field
-              v-model="payment.cpf"
-              label="CPF"
-              type="text"
-              @input="validateCPF"
-              v-mask="'###.###.###-##'"
-              placeholder="###.###.###-##"
-              dense
-              class="custom-text-field"
-              :class="{ invalid: !validCpf && payment.cpf.length > 0 }"
-              required
-              color="secondary"
-            ></v-text-field>
+            <v-text-field v-model="payment.cpf" label="CPF" type="text" @input="validateCPF" v-mask="'###.###.###-##'"
+              placeholder="###.###.###-##" dense class="custom-text-field"
+              :class="{ invalid: !validCpf && payment.cpf.length > 0 }" required color="secondary"></v-text-field>
             <span v-if="!validCpf && payment.cpf.length > 0" class="error-message">CPF inválido</span>
           </div>
 
           <div class="buttons-container">
+            <v-btn color="secondary" class="btn-custom float-right" @click="step = 1" v-if="$store.state.login">
+              Voltar
+            </v-btn>
             <div v-if="paymentMethod === 'pix'">
               <v-btn color="secondary" class="btn-custom" @click="generatePaymentData">
                 Gerar dados de pagamento
@@ -119,28 +79,40 @@
               </v-btn>
             </div>
 
-            <v-btn color="secondary" class="btn-custom" type="submit" v-if="paymentMethod === 'cartao' && $store.state.login">
+
+            <v-btn color="secondary" class="btn-custom " type="submit"
+              v-if="paymentMethod === 'cartao' && $store.state.login">
               Finalizar Compra
             </v-btn>
 
-            <v-btn color="secondary" class="btn-custom" @click="step = 1" v-if="$store.state.login">
-              Voltar
-            </v-btn>
+
           </div>
         </form>
       </v-stepper-content>
     </v-stepper-items>
 
-    <v-dialog v-model="dialog" max-width="600">
+    <v-dialog v-model="dialog" max-width="800" @input="dialog ? null : resetPaymentData">
       <v-card>
         <v-card-title class="headline">{{ isQRCode ? 'QR Code' : 'Código de Barras' }}</v-card-title>
         <v-card-text>
-          <div class="qr-code-container" v-if="isQRCode">
-            <canvas ref="qrcode"></canvas>
-          </div>
-          <div class="barcode-container" v-if="!isQRCode">
-            <canvas ref="barcode"></canvas>
-          </div>
+          <v-row>
+            <v-col cols="6">
+              <div class="info-column">
+                <p><strong>Comprador:</strong> {{ compra.comprador_id }}</p>
+                <p><strong>CPF:</strong> {{ payment.cpf }}</p>
+                <p><strong>Nome do Produto:</strong> {{ produto.nome }}</p>
+                <p><strong>Preço:</strong> {{ formatPrice(produto.preco) }}</p>
+              </div>
+            </v-col>
+            <v-col cols="6">
+              <div class="qr-code-container" v-if="isQRCode">
+                <canvas ref="qrcode"></canvas>
+              </div>
+              <div class="barcode-container" v-if="!isQRCode">
+                <canvas ref="barcode"></canvas>
+              </div>
+            </v-col>
+          </v-row>
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
@@ -210,7 +182,7 @@ export default {
           await this.createUser();
         }
       } else {
-        alert("CPF inválido. Por favor, corrija o CPF antes de finalizar a compra.");
+        alert("CPF inválido.");
       }
     },
 
@@ -226,7 +198,7 @@ export default {
           numero,
           bairro,
           cidade,
-          estado
+          estado,
         };
         await this.$store.dispatch('createUser', userPayload);
         await this.$store.dispatch('getUser', email);
@@ -282,21 +254,50 @@ export default {
       this.validCpf = true;
     },
 
+    formatPrice(price) {
+      return new Intl.NumberFormat('pt-BR', {
+        style: 'currency',
+        currency: 'BRL'
+      }).format(price);
+    },
+
     formatCardNumber() {
       this.payment.numeroCartao = this.payment.numeroCartao.replace(/\D/g, '');
       this.payment.numeroCartao = this.payment.numeroCartao.replace(/(\d{4})(\d{4})(\d{4})(\d{4})/, '$1 $2 $3 $4');
     },
 
+    resetPaymentData() {
+      if (this.paymentMethod === 'pix' || this.paymentMethod === 'boleto') {
+        this.payment.cpf = '';
+        this.clearCanvas();
+      }
+    },
+
+    clearCanvas() {
+      const qrCanvas = this.$refs.qrcode;
+      const barcodeCanvas = this.$refs.barcode;
+
+      if (qrCanvas) {
+        const qrCtx = qrCanvas.getContext('2d');
+        qrCtx.clearRect(0, 0, qrCanvas.width, qrCanvas.height);
+      }
+
+      if (barcodeCanvas) {
+        const barcodeCtx = barcodeCanvas.getContext('2d');
+        barcodeCtx.clearRect(0, 0, barcodeCanvas.width, barcodeCanvas.height);
+      }
+    },
+
     async generatePaymentData() {
       this.isQRCode = true;
       this.dialog = true;
-
-      const qr = new QRious({
-        value: 'Exemplo de QR Code', 
-        size: 250
-      });
-
+      this.clearCanvas();
       this.$nextTick(() => {
+        const qr = new QRious({
+          value: 'Exemplo de QR Code',
+          size: 150
+        });
+
         const canvas = this.$refs.qrcode;
         const ctx = canvas.getContext('2d');
         ctx.drawImage(qr.canvas, 0, 0);
@@ -306,18 +307,20 @@ export default {
     async generatePaymentBoleto() {
       this.isQRCode = false;
       this.dialog = true;
-
-      const barcodeData = '12345678901234567890'; 
-      BWIPJS.toCanvas(this.$refs.barcode, {
-        bcid: 'code39',
-        text: barcodeData,
-        scale: 3,
-        height: 10,
-        includetext: true
-      }, (err) => {
-        if (err) {
-          console.error(err);
-        }
+      this.clearCanvas();
+      this.$nextTick(() => {
+        const barcodeData = '12345678901';
+        BWIPJS.toCanvas(this.$refs.barcode, {
+          bcid: 'code39',
+          text: barcodeData,
+          scale: 3,
+          height: 10,
+          includetext: true
+        }, (err) => {
+          if (err) {
+            console.error(err);
+          }
+        });
       });
     }
   }
@@ -372,6 +375,7 @@ h2 {
 .error-message {
   color: red;
 }
+
 .qr-code-container {
   display: flex;
   justify-content: center;
@@ -385,5 +389,17 @@ h2 {
 .barcode-container {
   display: flex;
   justify-content: center;
+}
+
+.float-left {
+  margin-left: auto;
+}
+
+.float-right {
+  margin-right: auto;
+}
+
+.custom-dialog .v-card {
+  height: 100vh;
 }
 </style>

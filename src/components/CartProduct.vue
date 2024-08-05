@@ -145,11 +145,8 @@ export default {
 
 .cart-title {
   color: #002244;
-  /* Cor secundária */
   font-size: 28px;
-  /* Aumentar a fonte */
   font-weight: bold;
-  /* Negrito */
   margin-left: 10px;
 }
 

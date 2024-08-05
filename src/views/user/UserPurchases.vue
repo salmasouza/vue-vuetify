@@ -31,7 +31,7 @@ export default {
   methods: {
     async getPurchases() {
       try {
-        const resp = await api.get(`/transacao?comprador_id=${this.usuario.email}`); // Use email como comprador_id
+        const resp = await api.get(`/transacao?comprador_id=${this.usuario.email}`); 
         this.purchases = resp.data;
       } catch (error) {
         console.error('Erro ao buscar compras:', error);

@@ -26,7 +26,7 @@
         </v-col>
       </v-row>
 
-      <v-row class="justify-center"> <!-- Add this class to center the buttons -->
+      <v-row class="justify-center mt-3"> <!-- Add this class to center the buttons -->
         <v-col cols="auto">
           <v-btn type="submit" color="secondary" class="mr-2 custom-btn">
             Adicionar Produto

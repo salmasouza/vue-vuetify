@@ -2,7 +2,7 @@
   <header>
     <nav>
       <router-link to="/" class="logo">
-        <img src="@/assets/logo.jpg" alt="Deep Space Store">
+        <img src="@/assets/logo4.jpg" alt="Deep Space Store">
       </router-link>
       <div class="nav-links">
         <v-btn
@@ -63,7 +63,7 @@ nav {
 }
 
 .logo {
-  padding: 10px 0;
+  padding: 20px 0;
 }
 
 .logo img {

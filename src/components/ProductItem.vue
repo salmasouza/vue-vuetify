@@ -36,7 +36,6 @@ export default {
 .product {
   display: grid;
   grid-template-columns: 150px 1fr;
-  /* Aumenta a largura da imagem para 150px */
   gap: 15px;
   margin-bottom: 30px;
   position: relative;
@@ -46,9 +45,7 @@ export default {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   transition: box-shadow 0.3s, transform 0.3s;
   max-width: 450px;
-  /* Ajusta a largura máxima para acomodar a imagem maior */
   height: 160px;
-  /* Mantém a altura */
 }
 
 .product:hover {
