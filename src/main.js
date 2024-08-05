@@ -5,12 +5,14 @@ import store from './store';
 import vuetify from './plugins/vuetify';
 import Toast from 'vue-toastification';
 import 'vue-toastification/dist/index.css'; 
-import { TheMask } from 'vue-the-mask';
 import '@fortawesome/fontawesome-free/css/all.css'; 
 import 'vuetify/dist/vuetify.min.css';
+import VueTheMask from 'vue-the-mask';
+
+Vue.use(VueTheMask);
 
 Vue.use(Toast);
-Vue.use(TheMask);
+
 
 Vue.config.productionTip = false;
 

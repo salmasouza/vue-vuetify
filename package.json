@@ -5,7 +5,8 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "test:unit": "jest src/tests/unit/CheckoutComponent.spec.js"
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^6.6.0",
@@ -22,16 +23,27 @@
     "vuex": "^3.6.2"
   },
   "devDependencies": {
-    "@babel/core": "^7.12.16",
+    "@babel/core": "^7.25.2",
     "@babel/eslint-parser": "^7.12.16",
+    "@babel/preset-env": "^7.25.3",
+    "@babel/preset-react": "^7.24.7",
     "@vue/cli-plugin-babel": "^5.0.0",
     "@vue/cli-plugin-eslint": "^5.0.0",
+    "@vue/cli-plugin-unit-jest": "^5.0.8",
     "@vue/cli-service": "^5.0.0",
+    "@vue/test-utils": "^1.3.6",
+    "@vue/vue2-jest": "^27.0.0",
+    "babel-core": "^7.0.0-bridge.0",
+    "babel-jest": "^27.5.1",
     "eslint": "^7.32.0",
     "eslint-plugin-vue": "^8.0.3",
+    "identity-obj-proxy": "^3.0.0",
+    "jest": "^27.5.1",
+    "jest-serializer-vue": "^3.1.0",
     "sass": "~1.32.0",
     "sass-loader": "^10.0.0",
     "vue-cli-plugin-vuetify": "^2.5.8",
+    "vue-jest": "^3.0.7",
     "vue-template-compiler": "^2.6.14",
     "vuetify-loader": "^1.7.0"
   },

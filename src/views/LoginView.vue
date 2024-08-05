@@ -12,6 +12,7 @@
           required
           dense
           color="secondary"
+          data-test="email-field" 
         ></v-text-field>
         <p v-if="emailError" class="error">{{ emailError }}</p>
         
