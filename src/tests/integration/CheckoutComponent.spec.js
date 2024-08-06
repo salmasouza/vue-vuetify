@@ -1,10 +1,15 @@
-import { shallowMount, createLocalVue } from '@vue/test-utils';
+import { shallowMount, createLocalVue, flushPromises } from '@vue/test-utils';
 import Vuex from 'vuex';
 import CheckoutComponent from '@/components/CheckoutComponent.vue'; 
 import Toast from 'vue-toastification';
+import VMask from '../__mocks__/v-mask';
+import * as api from '@/api'; // Importa o módulo API real
 
 const localVue = createLocalVue();
 localVue.use(Vuex);
+localVue.directive('mask', VMask);
+
+jest.mock('@/api'); // Mocka o módulo API
 
 jest.mock('vue-toastification', () => ({
   fire: jest.fn()
@@ -18,6 +23,7 @@ const store = new Vuex.Store({
   state: {
     login: true,
     usuario: {
+      id: 'user-id',
       email: 'user@example.com',
       cep: '12345678',
       rua: 'Rua Exemplo',
@@ -31,7 +37,6 @@ const store = new Vuex.Store({
 
 describe('CheckoutComponent', () => {
   let wrapper;
-  let createCheckoutSpy;
 
   beforeEach(() => {
     wrapper = shallowMount(CheckoutComponent, {
@@ -48,8 +53,6 @@ describe('CheckoutComponent', () => {
         }
       }
     });
-
-    createCheckoutSpy = jest.spyOn(wrapper.vm, 'createCheckout').mockResolvedValue();
   });
 
   it('should show a success Toast message when checkout is finalized successfully', async () => {
@@ -64,9 +67,15 @@ describe('CheckoutComponent', () => {
       }
     });
 
-    await wrapper.find('#finalizar-pedido').trigger('click');
+    const finishCheckoutSpy = jest.spyOn(wrapper.vm, 'finishCheckout').mockImplementation(async () => {
+      console.log('finishCheckout chamado'); // Adicione este log
+      await api.createCheckout();
+    });
 
-    expect(createCheckoutSpy).toHaveBeenCalled();
+    await wrapper.find('#finalizar-pedido').trigger('click');
+    await flushPromises(); // Aguarda as Promises se resolverem
+
+    expect(finishCheckoutSpy).toHaveBeenCalled();
     expect(Toast.fire).toHaveBeenCalled();
     expect(Toast.fire).toHaveBeenCalledWith(expect.objectContaining({
       icon: 'success',
