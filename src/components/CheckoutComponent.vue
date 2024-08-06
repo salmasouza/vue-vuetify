@@ -84,7 +84,7 @@
             </div>
 
 
-            <v-btn color="secondary" class="btn-custom " type="submit" id="finalizar-pedido"
+            <v-btn color="secondary" class="btn-custom " type="submit" id="finalizar-pedido" @click="finishCheckout"
               v-if="paymentMethod === 'cartao' && $store.state.login">
               Finalizar Compra
             </v-btn>
@@ -181,7 +181,7 @@ export default {
 
     async finishCheckout() {
       if (this.payment.cpf.length === 0) {
-        this.$toast.error("CPF é obrigatório."); // Use o método error para exibir mensagens de erro
+        this.$toast.error("CPF é obrigatório."); 
         return;
       }
 
