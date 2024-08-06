@@ -17,4 +17,9 @@ module.exports = {
   ],
   coverageReporters: ['html', 'text-summary'],
   transformIgnorePatterns: ['/node_modules/(?!(axios|some-other-package-to-transform)/)'],
+  testMatch: [
+    '**/tests/unit/**/*.spec.[jt]s?(x)',
+    '**/tests/integration/**/*.spec.[jt]s?(x)',
+    '**/__tests__/*.[jt]s?(x)',
+  ],
 };

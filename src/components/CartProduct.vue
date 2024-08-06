@@ -13,7 +13,7 @@
           <div class="title-container">
             <h2 class="name">{{ item.produto.nome }}</h2>
             <v-btn icon @click="openDialog(item.id)" class="favorite-btn">
-              <v-icon>mdi-delete</v-icon>
+              <v-icon color="red">mdi-delete</v-icon>
             </v-btn>
           </div>
         </v-card-title>
@@ -120,7 +120,7 @@ export default {
       if (isNaN(numberValue) || numberValue < 0) {
         numberValue = 0;
       }
-      const formatted = `R$ ${numberValue.toFixed(2).replace('.', ',')}`;
+      const formatted =` R$ ${numberValue.toFixed(2).replace('.', ',')}`;
 
       return formatted;
     }

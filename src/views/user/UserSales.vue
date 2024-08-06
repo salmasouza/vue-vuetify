@@ -6,18 +6,53 @@
         <ProductItem v-if="sale.produto" :product="sale.produto">
           <p class="buyer"><span>Comprador:</span> {{ sale.comprador_id }}</p>
         </ProductItem>
-        <div class="delivery-address">
+        <div  v-if="sale.endereco">
+          <h3>Entrega:</h3>
+          <v-simple-table >
+          <template v-slot:default>
+            <thead>
+              <tr>
+                <th class="text-left">
+                  CEP
+                </th>
+                <th class="text-left">
+                  Rua
+                </th>
+                <th class="text-left">
+                  Bairro
+                </th>
+                <th class="text-left">
+                  Cidade
+                </th>
+                <th class="text-left">
+                  Estado
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td v-for="value, key in sale.endereco" :key="key">{{ value }}</td>
+
+              </tr>
+            </tbody>
+          </template>
+        </v-simple-table>
+        </div>
+
+        <h2 v-else>Poxa! Você ainda não realizou nenhuma venda. 💔</h2>
+        
+        <!-- <div class="delivery-address">
           <h3>Entrega:</h3>
           <ul v-if="sale.endereco">
             <li v-for="value, key in sale.endereco" :key="key">
               {{ key }} : {{ value }}
             </li>
           </ul>
-        </div>
-        <hr class="solid" />
+        </div> -->
+        <!-- <hr class="solid" /> -->
       </div>
     </div>
-    <h2 v-else>Poxa! Você ainda não realizou nenhuma venda. 💔</h2>
+    <!-- <h2 v-else>Poxa! Você ainda não realizou nenhuma venda. 💔</h2> -->
   </section>
 </template>
 
@@ -28,26 +63,68 @@ import { mapState } from 'vuex'
 
 export default {
   components: { ProductItem },
-  data () {
+  data() {
     return {
-      sales: []
+      sales: [],
+      desserts: [
+        {
+          name: 'Frozen Yogurt',
+          calories: 159,
+        },
+        {
+          name: 'Ice cream sandwich',
+          calories: 237,
+        },
+        {
+          name: 'Eclair',
+          calories: 262,
+        },
+        {
+          name: 'Cupcake',
+          calories: 305,
+        },
+        {
+          name: 'Gingerbread',
+          calories: 356,
+        },
+        {
+          name: 'Jelly bean',
+          calories: 375,
+        },
+        {
+          name: 'Lollipop',
+          calories: 392,
+        },
+        {
+          name: 'Honeycomb',
+          calories: 408,
+        },
+        {
+          name: 'Donut',
+          calories: 452,
+        },
+        {
+          name: 'KitKat',
+          calories: 518,
+        },
+      ],
     }
   },
   computed: {
     ...mapState(["usuario", "login"])
   },
   methods: {
-    async getSales () {
+    async getSales() {
       await api.get(`/transacao?vendedor_id=${this.usuario.id}`)
-              .then(resp => this.sales = resp.data)
+        .then(resp => this.sales = resp.data)
     }
   },
   watch: {
-    login () {
+    login() {
       this.getSales()
     }
   },
-  created () {
+  created() {
     if (this.login) this.getSales()
   }
 }

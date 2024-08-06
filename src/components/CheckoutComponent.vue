@@ -43,24 +43,28 @@
 
           <div>
             <v-text-field v-if="paymentMethod === 'cartao'" color="secondary" v-model="payment.numeroCartao"
-              label="Número do Cartão" type="text" dense class="custom-text-field" @input="formatCardNumber"
-              maxlength="19" required></v-text-field>
+              name="numeroCartao" label="Número do Cartão" type="text" dense class="custom-text-field"
+              @input="formatCardNumber" maxlength="19" required></v-text-field>
 
             <div class="payment-details">
-              <v-text-field v-if="paymentMethod === 'cartao'" v-model="payment.prazo" label="Prazo" type="text" dense
-                class="payment-group" required color="secondary"></v-text-field>
+              <v-text-field name="prazo" v-if="paymentMethod === 'cartao'" v-model="payment.prazo" label="Prazo"
+                type="text" dense class="payment-group" required color="secondary"></v-text-field>
 
-              <v-text-field v-if="paymentMethod === 'cartao'" v-model="payment.cvc" label="CVC" type="text" dense
-                class="payment-group" required color="secondary"></v-text-field>
+              <v-text-field name="cvc" v-if="paymentMethod === 'cartao'" v-model="payment.cvc" label="CVC" type="text"
+                dense class="payment-group" required color="secondary"></v-text-field>
             </div>
 
-            <v-text-field v-if="paymentMethod === 'cartao'" v-model="payment.nomeCartao" label="Nome no Cartão"
-              type="text" dense class="custom-text-field" required color="secondary"></v-text-field>
+            <v-text-field name="nomeCartao" v-if="paymentMethod === 'cartao'" v-model="payment.nomeCartao"
+              label="Nome no Cartão" type="text" dense class="custom-text-field" required
+              color="secondary"></v-text-field>
 
             <v-text-field name="cpf" v-model="payment.cpf" label="CPF" type="text" @input="validateCPF"
               v-mask="'###.###.###-##'" placeholder="###.###.###-##" dense class="custom-text-field"
-              :class="{ invalid: !validCpf && payment.cpf.length > 0 }" required color="secondary"></v-text-field>
+              :class="{ invalid: !validCpf && payment.cpf.length > 0 || payment.cpf.length === 0 }" required
+              color="secondary"></v-text-field>
             <span v-if="!validCpf && payment.cpf.length > 0" class="error-message">CPF inválido</span>
+            <span v-if="payment.cpf.length === 0" class="error-message">CPF é obrigatório</span>
+
           </div>
 
           <div class="buttons-container">
@@ -80,7 +84,7 @@
             </div>
 
 
-            <v-btn color="secondary" class="btn-custom " type="submit"
+            <v-btn color="secondary" class="btn-custom " type="submit" id="finalizar-pedido"
               v-if="paymentMethod === 'cartao' && $store.state.login">
               Finalizar Compra
             </v-btn>
@@ -130,6 +134,7 @@ import { api } from '@/services.js';
 import QRious from 'qrious';
 import BWIPJS from 'bwip-js';
 
+
 export default {
   name: 'CheckoutComponent',
   components: { UserForm },
@@ -175,17 +180,22 @@ export default {
     },
 
     async finishCheckout() {
+      if (this.payment.cpf.length === 0) {
+        this.$toast.error("CPF é obrigatório."); // Use o método error para exibir mensagens de erro
+        return;
+      }
+
       if (this.validCpf) {
         if (this.$store.state.login) {
           await this.createCheckout();
+          this.$toast.success('Compra finalizada com sucesso!');
         } else {
           await this.createUser();
         }
       } else {
-        alert("CPF inválido.");
+        this.$toast.error("CPF inválido.");
       }
     },
-
     async createUser() {
       try {
         const { nome, email, senha, cep, rua, numero, bairro, cidade, estado } = this.$store.state.usuario;
@@ -417,5 +427,14 @@ h2 {
 
 .custom-dialog .v-card {
   height: 100vh;
+}
+
+.error-message {
+  color: red;
+  font-size: 12px;
+}
+
+.custom-text-field.invalid input {
+  border: none;
 }
 </style>

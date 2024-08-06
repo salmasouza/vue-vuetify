@@ -7,6 +7,7 @@
         dense
         class="custom-text-field"
         color="secondary"
+        name="nome"
       ></v-text-field>
 
       <v-text-field
@@ -16,6 +17,7 @@
         dense
         class="custom-text-field"
         color="secondary"
+        naome="email"
       ></v-text-field>
 
       <v-text-field
@@ -25,6 +27,7 @@
         dense
         class="custom-text-field"
         color="secondary"
+        name="senha"
       ></v-text-field>
     </div>
 
@@ -35,6 +38,7 @@
       dense
       class="custom-text-field"
       color="secondary"
+      name="cep"
     ></v-text-field>
 
     <div class="address-group">
@@ -44,6 +48,7 @@
         dense
         class="address-field"
         color="secondary"
+        name="rua"
       ></v-text-field>
 
       <v-text-field
@@ -52,6 +57,7 @@
         dense
         class="address-field"
         color="secondary"
+        name="numero"
       ></v-text-field>
     </div>
 
@@ -61,6 +67,7 @@
       dense
       class="custom-text-field"
       color="secondary"
+      name="bairro"
     ></v-text-field>
 
     <v-text-field
@@ -69,6 +76,7 @@
       dense
       class="custom-text-field"
       color="secondary"
+      name="cidade"
     ></v-text-field>
 
     <v-text-field
@@ -77,6 +85,7 @@
       dense
       class="custom-text-field"
       color="secondary"
+      name="estado"
     ></v-text-field>
 
     <div class="button">
